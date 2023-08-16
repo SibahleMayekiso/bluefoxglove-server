@@ -4,16 +4,17 @@ namespace BlueFoxGloveAPI.Models
 {
     public class Characters
     {
-        [BsonElement("name")]
-        public string Name { get; set; }
+        [BsonElement("charactername")]
+        public string CharacterName { get; set; }
 
-        [BsonElement("playertype")]
-        public string PlayerType { get; set; }
+        [BsonElement("charactertype")]
+        public string CharacterType { get; set; }
 
-        [BsonElement("health")]
-        public int Health { get; set; }
-        [BsonElement("playerspeed")]
-        public int PlayerSpeed { get; set; }
+        [BsonElement("charactermaxhealth")]
+        public int CharacterMaxHealth { get; set; }
+
+        [BsonElement("charactermaxspeed")]
+        public int CharacterMaxSpeed { get; set; }
 
     }
 }

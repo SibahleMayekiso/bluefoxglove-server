@@ -9,13 +9,22 @@ namespace BlueFoxGloveAPI.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string PlayerId { get; set; }
 
-        [BsonElement("name")]
-        public string Name { get; set; }
+        [BsonElement("playername")]
+        public string PlayerName { get; set; }
 
-        [BsonElement("points")]
-        public int Points { get; set; }
+        [BsonElement("playerxcoordinate")]
+        public int PlayerXCoordinate { get; set; }
 
-        [BsonElement("timestamp")]
-        public DateTime PlayerTime { get; set; }
+        [BsonElement("playerycoordinate")]
+        public int PlayerYCoordinate { get; set; }
+
+        [BsonElement("playerpoints")]
+        public int PlayerPoints { get; set; }
+
+        [BsonElement("playertimestamp")]
+        public DateTime PlayerTimestamp { get; set; }
+
+        [BsonElement("playerhealth")]
+        public int PlayerHealth { get; set; }
     }
 }
