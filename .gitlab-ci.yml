@@ -1,0 +1,37 @@
+stages:
+  - build
+  - test
+
+variables:
+  IMAGE_NAME: bluefoxgloveapi
+  IMAGE_TAG: f9a6f073a8d0
+
+.build_template: &build_definition
+  image: mcr.microsoft.com/dotnet/sdk:6.0
+  stage: build
+  script:
+    - dotnet restore
+    - dotnet build --configuration Release
+
+.deploy_template: &deploy_definition
+  image: docker:20
+  stage: deploy
+  services:
+    - docker:20-dind
+  script:
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker run -d -p 8080:80 --name $IMAGE_NAME:$IMAGE_TAG
+
+build:
+  <<: *build_definition
+  stage: build
+  script:
+    - dotnet publish --configuration Release --output publish_output
+
+test:
+  <<: *build_definition
+  stage: test
+  script:
+    - dotnet test --configuration Release
+
+
