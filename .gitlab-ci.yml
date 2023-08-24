@@ -11,7 +11,7 @@ variables:
   stage: build
   script:
     - dotnet restore
-    - dotnet build --configuration Release --project /blue-fox-server/BlueFoxGloveAPI/BlueFoxGloveAPI.csproj
+    - dotnet build --configuration Release 
 
 .deploy_template: &deploy_definition
   image: docker:20
@@ -19,6 +19,7 @@ variables:
   services:
     - docker:20-dind
   script:
+    -cd /blue-fox-server/BlueFoxGloveAPI/BlueFoxGloveAPI.csproj
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
     - docker run -d -p 8080:80 --name $IMAGE_NAME:$IMAGE_TAG
 
@@ -26,12 +27,15 @@ build:
   <<: *build_definition
   stage: build
   script:
-    - dotnet publish --configuration Release --output publish_output --project /blue-fox-server/BlueFoxGloveAPI/BlueFoxGloveAPI.csproj
-
+    - cd /blue-fox-server/BlueFoxGloveAPI/BlueFoxGloveAPI.csproj
+    - dotnet build --configuration Release
+    - dotnet publish --configuration Release --output publish_output
 test:
   <<: *build_definition
   stage: test
   script:
-    - dotnet test --configuration Release --project /blue-fox-server/BlueFoxGloveAPI/BlueFoxGloveAPI.csproj
+    - cd /blue-fox-server/BlueFoxGloveAPI/BlueFoxGloveAPI.csproj
+    - dotnet restore
+    - dotnet test --configuration Release
 
 
