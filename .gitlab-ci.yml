@@ -19,7 +19,7 @@ variables:
   services:
     - docker:20-dind
   script:
-    -cd /blue-fox-server/BlueFoxGloveAPI/BlueFoxGloveAPI.csproj
+    -cd BlueFoxGloveAPI
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
     - docker run -d -p 8080:80 --name $IMAGE_NAME:$IMAGE_TAG
 
@@ -27,14 +27,14 @@ build:
   <<: *build_definition
   stage: build
   script:
-    - cd /blue-fox-server/BlueFoxGloveAPI/BlueFoxGloveAPI.csproj
+    - cd BlueFoxGloveAPI
     - dotnet build --configuration Release
     - dotnet publish --configuration Release --output publish_output
 test:
   <<: *build_definition
   stage: test
   script:
-    - cd /blue-fox-server/BlueFoxGloveAPI/BlueFoxGloveAPI.csproj
+    - cd BlueFoxGloveAPI
     - dotnet restore
     - dotnet test --configuration Release
 
