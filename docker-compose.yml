@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  bluefoxgloveapi:
+    container_name: bluefoxglovedemoapi
+    image: ${DOCKER_REGISTRY-}bluefoxgloveapi
+    build:
+      context: .
+      dockerfile: BlueFoxGloveAPI/Dockerfile
+    networks:
+       - bluefoxglovedemonetwork
+
+networks:
+  bluefoxglovedemonetwork:
+    external: true
