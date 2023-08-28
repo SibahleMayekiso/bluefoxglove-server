@@ -24,6 +24,7 @@ variables:
     - docker run -d -p 8080:80 --name $IMAGE_NAME:$IMAGE_TAG
 
 build:
+  <<: *build_definition
   stage: build
   script:
     - cd BlueFoxGloveAPI
