@@ -13,6 +13,12 @@ variables:
     - dotnet restore
     - dotnet build --configuration Release 
 
+.test_template: &test_definition
+  image: mcr.microsoft.com/dotnet/sdk:6.0
+  stage: test
+  script:
+    - dotnet restore
+
 .deploy_template: &deploy_definition
   image: docker:20
   stage: deploy
@@ -28,14 +34,12 @@ build:
   stage: build
   script:
     - cd BlueFoxGloveAPI
-    - dotnet build --configuration Release
     - dotnet publish --configuration Release --output publish_output
 test:
-  <<: *build_definition
+  <<: *test_definition
   stage: test
   script:
     - cd BlueFoxGloveAPI
-    - dotnet restore
     - dotnet test --configuration Release
 
 
