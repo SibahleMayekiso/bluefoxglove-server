@@ -6,7 +6,7 @@ namespace BlueFoxGloveAPI.Controllers
 {
     [ApiController]
     [Route("/")]
-    public class PlayerController: ControllerBase
+    public class PlayerController : ControllerBase
     {
         private readonly IPlayerRepository _playerRepository;
 
@@ -30,7 +30,13 @@ namespace BlueFoxGloveAPI.Controllers
         [HttpGet("[controller]/playerprofile/{playerID}")]
         public async Task<IActionResult> GetPlayerProfileById(string playerId)
         {
-            return null;
+            var player = await _playerRepository.GetPlayerByIdAsync(playerId);
+            if (player == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(player);
         }
 
         [HttpPut("[controller]/playerprofile")]
