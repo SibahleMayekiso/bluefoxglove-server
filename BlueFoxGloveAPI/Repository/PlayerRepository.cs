@@ -1,41 +1,36 @@
-﻿using BlueFoxGloveAPI.Repository.Interfaces;
-
-using BlueFoxGloveAPI.Models;
+﻿using BlueFoxGloveAPI.Models;
+using BlueFoxGloveAPI.Repository.Interfaces;
 using MongoDB.Driver;
 
 namespace BlueFoxGloveAPI.Repository
 {
-    public class PlayerRepository: IPlayerRepository
+    public class PlayerRepository : IPlayerRepository
     {
         private readonly IMongoCollection<Player> _playersCollection;
         public PlayerRepository(IMongoDatabase mongoDatabase)
         {
-     
+            _playersCollection = mongoDatabase.GetCollection<Player>("players");
         }
         public async Task CreateNewPlayerAsync(Player newPlayer)
         {
-          
+
         }
-        public async Task<List<Player>> GetPlayersByIdAsync()
+        public async Task<Player> GetPlayerByIdAsync(string playerId)
         {
-            return null; 
+            return await _playersCollection.Find(player => player.PlayerId == playerId).FirstOrDefaultAsync();
         }
         public async Task UpdatePlayerAsync(Player playerToUpdate)
         {
-            
+
         }
-        public async Task DeletePlayerAsync(string PlayerId)
+        public Task<List<Player>> GetAllPlayersAsync()
         {
+            return null;
+        }
+        public async Task DeletePlayerAsync(string playerId)
+        {
+
         }
 
-        public Task<List<Player>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Player>> GetPlayersByIdAsync(string PlayerId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
