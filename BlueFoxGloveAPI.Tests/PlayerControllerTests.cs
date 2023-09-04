@@ -24,7 +24,7 @@ namespace BlueFoxGloveAPI.Tests
         public async Task GetPlayerProfileById_WhenCalledWithAValidPlayerIdAndThePlayerExists_ReturnsThePlayer()
         {
             // Arrange
-            string playerId = "playerId";
+            string playerId = "64dd1cf27a6922a9502fc8be";
             var expectedPlayer = new Player { PlayerId = playerId, PlayerName = "Jane Doe" };
 
             _playerRepository.GetPlayerByIdAsync(playerId).Returns(expectedPlayer);
