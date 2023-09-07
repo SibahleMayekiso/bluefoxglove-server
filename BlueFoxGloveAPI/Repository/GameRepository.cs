@@ -1,6 +1,5 @@
-﻿using BlueFoxGloveAPI.Repository.Interfaces;
-
-using BlueFoxGloveAPI.Models;
+﻿using BlueFoxGloveAPI.Models;
+using BlueFoxGloveAPI.Repository.Interfaces;
 using MongoDB.Driver;
 
 namespace BlueFoxGloveAPI.Repository
@@ -11,7 +10,7 @@ namespace BlueFoxGloveAPI.Repository
         private readonly IMongoCollection<Player> _playerCollection;
         public GameRepository(IMongoDatabase mongoDatabase)
         {
-           
+
         }
         public async Task<List<Game>> GetAllAsync()
         {
@@ -23,15 +22,15 @@ namespace BlueFoxGloveAPI.Repository
         }
         public async Task CreateNewGameAsync(Game newGame)
         {
-            
+
         }
         public async Task UpdateGameTime(string gameSessionId, DateTime newTimeStamp)
         {
-          
+
         }
         public async Task DeleteGamePlayersAsync(Player playersRemoved)
         {
-            
+
         }
 
         public Task UpdateGameTimeAsync(string gameSessionId, DateTime newTimeStamp)

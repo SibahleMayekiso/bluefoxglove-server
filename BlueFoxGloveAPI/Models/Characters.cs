@@ -15,6 +15,5 @@ namespace BlueFoxGloveAPI.Models
 
         [BsonElement("charactermaxspeed")]
         public int CharacterMaxSpeed { get; set; }
-
     }
 }

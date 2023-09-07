@@ -1,6 +1,5 @@
-﻿using BlueFoxGloveAPI.Repository.Interfaces;
-
-using BlueFoxGloveAPI.Models;
+﻿using BlueFoxGloveAPI.Models;
+using BlueFoxGloveAPI.Repository.Interfaces;
 using MongoDB.Driver;
 
 namespace BlueFoxGloveAPI.Repository
@@ -10,7 +9,7 @@ namespace BlueFoxGloveAPI.Repository
         private readonly IMongoCollection<Characters> _charactersCollection;
         public CharacterRepository(IMongoDatabase mongoDatabase)
         {
-            
+
         }
         public async Task<List<Characters>> GetAllAsync()
         {

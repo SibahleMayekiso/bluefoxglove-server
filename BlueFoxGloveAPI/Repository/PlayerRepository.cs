@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace BlueFoxGloveAPI.Repository
 {
-    public class PlayerRepository : IPlayerRepository
+    public class PlayerRepository: IPlayerRepository
     {
         private readonly IMongoCollection<Player> _playersCollection;
         public PlayerRepository(IMongoDatabase mongoDatabase)
@@ -31,6 +31,5 @@ namespace BlueFoxGloveAPI.Repository
         {
 
         }
-
     }
 }

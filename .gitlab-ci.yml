@@ -1,4 +1,5 @@
 stages:
+  - precommit
   - build
   - test
 
@@ -28,6 +29,23 @@ variables:
     -cd BlueFoxGloveAPI
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
     - docker run -d -p 8080:80 --name $IMAGE_NAME:$IMAGE_TAG
+
+precommit:
+  image: python:3.10.2-slim-bullseye
+  stage: precommit
+  before_script:
+    - apt-get update && apt-get install -y git
+    - pip install pre-commit
+    - apt-get install -y apt-transport-https
+    - apt-get install -y wget
+    - wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    - dpkg -i packages-microsoft-prod.deb
+    - apt-get update
+    - apt-get install -y dotnet-sdk-6.0
+
+  script:
+    - ls -la
+    - pre-commit run --all-files --show-diff-on-failure --verbose
 
 build:
   <<: *build_definition

@@ -17,7 +17,8 @@ builder.Services.AddSingleton<IPlayerRepository, PlayerRepository>();
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDBSettings")
 );
-builder.Services.AddSingleton<IMongoDatabase>(options => {
+builder.Services.AddSingleton<IMongoDatabase>(options =>
+{
     var settings = builder.Configuration.GetSection("MongoDBSettings").Get<MongoDBSettings>();
     var client = new MongoClient(settings.ConnectionString);
     return client.GetDatabase(settings.DatabaseName);

@@ -6,7 +6,7 @@ namespace BlueFoxGloveAPI.Controllers
 {
     [ApiController]
     [Route("/")]
-    public class PlayerController : ControllerBase
+    public class PlayerController: ControllerBase
     {
         private readonly IPlayerRepository _playerRepository;
 

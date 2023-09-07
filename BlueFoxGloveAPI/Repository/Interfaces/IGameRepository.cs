@@ -1,7 +1,7 @@
 ﻿using BlueFoxGloveAPI.Models;
 
- namespace BlueFoxGloveAPI.Repository.Interfaces
-  {
+namespace BlueFoxGloveAPI.Repository.Interfaces
+{
     public interface IGameRepository
     {
         Task<List<Game>> GetAllAsync();
@@ -11,4 +11,4 @@
         Task UpdatedPlayerPositionAysnc(string gameSessionId, string playerId, int newX, int newY);
         Task DeleteGamePlayersAsync(Player playersRemoved);
     }
- }
+}
