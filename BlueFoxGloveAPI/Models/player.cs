@@ -5,26 +5,20 @@ namespace BlueFoxGloveAPI.Models
 {
     public class Player
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonElement("playerId")]
+        //[BsonRepresentation(BsonType.ObjectId), BsonElement("playerId")]
         public string PlayerId { get; set; }
-
-        [BsonElement("playername")]
+        [BsonElement("playerName")]
         public string PlayerName { get; set; }
-
-        [BsonElement("playerxcoordinate")]
+        [BsonElement("playerXCoordinate")]
         public int PlayerXCoordinate { get; set; }
-
-        [BsonElement("playerycoordinate")]
+        [BsonElement("playerYCoordinate")]
         public int PlayerYCoordinate { get; set; }
-
-        [BsonElement("playerpoints")]
+        [BsonElement("playerPoints")]
         public int PlayerPoints { get; set; }
-
-        [BsonElement("playertimestamp")]
+        [BsonElement("playerTimestamp")]
         public DateTime PlayerTimestamp { get; set; }
-
-        [BsonElement("playerhealth")]
+        [BsonElement("playerHealth")]
         public int PlayerHealth { get; set; }
     }
 }
