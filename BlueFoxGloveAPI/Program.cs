@@ -1,3 +1,4 @@
+using BlueFoxGloveAPI.Hubs;
 using BlueFoxGloveAPI.Models;
 using BlueFoxGloveAPI.Repository;
 using BlueFoxGloveAPI.Repository.Interfaces;
@@ -11,8 +12,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 builder.Services.AddSingleton<ICharacterRepository, CharacterRepository>();
-builder.Services.AddSingleton<IGameRepository, GameRepository>();
+builder.Services.AddSingleton<IGameRepository, GameSessionRepository>();
 builder.Services.AddSingleton<IPlayerRepository, PlayerRepository>();
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDBSettings")
@@ -37,5 +39,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<GameSessionHub>("/gameSessionHub");
 
 app.Run();

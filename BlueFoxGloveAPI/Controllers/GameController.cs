@@ -16,9 +16,17 @@ namespace BlueFoxGloveAPI.Controllers
         }
 
         [HttpPost("[controller]/gamesession")]
-        public async Task<IActionResult> CreateGameSession(Game game)
+        public async Task<IActionResult> CreateGameSession(GameSession newGameSession)
         {
-            return null;
+            if (string.IsNullOrWhiteSpace(newGameSession.GameSessionId) ||
+               newGameSession.PlayersJoiningSession == null ||
+               !newGameSession.PlayersJoiningSession.Any())
+            {
+                return BadRequest("Invalid or incomplete game session data");
+            }
+
+            await _gameRepository.CreateNewGameSessionAsync(newGameSession);
+            return CreatedAtAction(nameof(GetAllGameSessions), newGameSession);
         }
 
         [HttpGet("[controller]/gamesession")]

@@ -48,7 +48,6 @@ namespace BlueFoxGloveAPI.Tests
 
             // Assert
             Assert.IsInstanceOf<NotFoundResult>(result);
-
         }
     }
 }

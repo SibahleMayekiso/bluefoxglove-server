@@ -6,14 +6,11 @@ namespace BlueFoxGloveAPI.Models
     {
         [BsonElement("charactername")]
         public string CharacterName { get; set; }
-
-        [BsonElement("charactertype")]
+        [BsonElement("characterType")]
         public string CharacterType { get; set; }
-
-        [BsonElement("charactermaxhealth")]
+        [BsonElement("characterMaxHealth")]
         public int CharacterMaxHealth { get; set; }
-
-        [BsonElement("charactermaxspeed")]
+        [BsonElement("characterMaxSpeed")]
         public int CharacterMaxSpeed { get; set; }
     }
 }

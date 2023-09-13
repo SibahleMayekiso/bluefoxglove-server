@@ -3,16 +3,16 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace BlueFoxGloveAPI.Models
 {
-    public class Game
+    [BsonIgnoreExtraElements]
+    public class GameSession
     {
-        [BsonId]
-        [BsonElement("gamesessionid")]
+        [BsonElement("gameSessionId")]
         public string GameSessionId { get; set; }
-
-        [BsonElement("gamesessiontimestamp")]
+        [BsonElement("gameName")]
+        public string GameName { get; set; }
+        [BsonElement("gameSessionTimeStamp")]
         public DateTime GameSessionTimeStamp { get; set; }
-
-        [BsonElement("playersjoiningsession")]
+        [BsonElement("playersJoiningSession")]
         public List<Player> PlayersJoiningSession { get; set; }
     }
 }
