@@ -57,7 +57,7 @@ test:
   <<: *test_definition
   stage: test
   script:
-    - cd BlueFoxGloveAPI
+    - cd BlueFoxGloveAPI.Tests
     - dotnet test --configuration Release
 
 
