@@ -4,8 +4,6 @@ using BlueFoxGloveAPI.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Primitives;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel.DataCollection;
-using MongoDB.Driver.Core.Connections;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -47,8 +45,11 @@ namespace BlueFoxGloveAPI.Tests
                 {
                     new Player
                     {
-                        PlayerId = "Player 1",
-                        PlayerName = "JohnDoe",
+                        Credentials = new PlayerCredentials
+                        {
+                            PlayerId = "player1",
+                            PlayerName = "John Doe"
+                        },
                         PlayerTimestamp = DateTime.Now,
                         PlayerPoints = 0,
                         PlayerHealth = 100,
@@ -84,8 +85,11 @@ namespace BlueFoxGloveAPI.Tests
             //Arrange
             var expected = new Player
             {
-                PlayerId = "64dd1cf27a6922a9502fc8be",
-                PlayerName = "John Doe",
+                Credentials = new PlayerCredentials
+                {
+                    PlayerId = "64dd1cf27a6922a9505fc8be",
+                    PlayerName = "John Doe"
+                },
                 PlayerTimestamp = DateTime.Now,
                 PlayerPoints = 0,
                 PlayerHealth = 100,
@@ -93,7 +97,7 @@ namespace BlueFoxGloveAPI.Tests
                 PlayerYCoordinate = 100
             };
 
-            _playerRepository.GetPlayerByIdAsync(expected.PlayerId).Returns(expected);
+            _playerRepository.GetPlayerByIdAsync(expected.Credentials.PlayerId).Returns(expected);
             _gameRepository.GetGameSessionById(_gameSession.GameSessionId).Returns(_gameSession);
 
             _gameRepository
@@ -101,7 +105,7 @@ namespace BlueFoxGloveAPI.Tests
                 .Do(callback => _gameSession.PlayersJoiningSession.Add(expected));
 
             //Act
-            await _gameHub.JoinGameSession(_gameSession.GameSessionId, expected.PlayerId);
+            await _gameHub.JoinGameSession(_gameSession.GameSessionId, expected.Credentials.PlayerId);
             var actual = _gameSession.PlayersJoiningSession;
 
             //Assert

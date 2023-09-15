@@ -91,11 +91,22 @@ namespace BlueFoxGloveAPI.Hubs
 
             return 0;
         }
+        private int[] GenrateRandomPlayerPosition()
+        {
+            Random random = new Random();
+            int randomXPosition = random.Next(0, 1280);
+            int randomPosition = random.Next(0, 720);
 
+            return new int[2] { randomXPosition, randomPosition };
+        }
         public async Task JoinGameSession(string gameSessionId, string playerId)
         {
             var gameSession = await _gameRepository.GetGameSessionById(gameSessionId);
             var player = await _playerRepository.GetPlayerByIdAsync(playerId);
+
+            var playerCoordinates = GenrateRandomPlayerPosition();
+            player.PlayerXCoordinate = playerCoordinates[0];
+            player.PlayerYCoordinate = playerCoordinates[1];
 
             var updatedGameSession = await _gameRepository.UpdateGameSessionAsync(gameSession, player);
 

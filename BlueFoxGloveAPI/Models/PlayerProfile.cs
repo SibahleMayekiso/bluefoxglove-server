@@ -1,16 +1,13 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace BlueFoxGloveAPI.Models
 {
     public class PlayerProfile
     {
-        [BsonId, BsonRepresentation(BsonType.ObjectId)]
-        public string? PlayerId { get; set; }
-        [BsonElement("playerName"), Required, MaxLength(24)]
-        public string? PlayerName { get; set; }
+        [BsonElement("PlayerCredentials")]
+        public PlayerCredentials Credentials { get; set; }
         [BsonElement("longestSurvivalTime"), DefaultValue(0)]
         public int LongestSurvivalTime { get; set; }
         [BsonElement("totalPlayTime"), DefaultValue(0)]

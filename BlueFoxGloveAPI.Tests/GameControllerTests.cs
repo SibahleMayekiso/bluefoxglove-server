@@ -31,7 +31,14 @@ namespace BlueFoxGloveAPI.Tests
                 GameSessionTimeStamp = DateTime.Now,
                 PlayersJoiningSession = new List<Player>
                 {
-                    new Player {PlayerId = "playerId", PlayerName = "Jane Doe"}
+                    new Player
+                    {
+                        Credentials = new PlayerCredentials
+                        {
+                            PlayerId = "playerId",
+                            PlayerName = "John Doe"
+                        }
+                    }
                 }
             };
             _gameRepository
@@ -72,8 +79,20 @@ namespace BlueFoxGloveAPI.Tests
             // Arrange
             var expected = new List<Player>
             {
-                new Player { PlayerId = "player1" },
-                new Player { PlayerId = "player2" }
+                new Player
+                {
+                    Credentials = new PlayerCredentials
+                    {
+                        PlayerId = "player1"
+                    }
+                },
+                new Player
+                {
+                    Credentials = new PlayerCredentials
+                    {
+                         PlayerId = "player2"
+                    }
+                }
             };
             var newGame = new GameSession
             {

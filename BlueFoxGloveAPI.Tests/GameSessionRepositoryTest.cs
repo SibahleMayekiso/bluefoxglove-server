@@ -34,8 +34,11 @@ namespace BlueFoxGloveAPI.Tests
                     {
                         new Player
                         {
-                            PlayerId = "Player 1",
-                            PlayerName = "JohnDoe",
+                            Credentials = new PlayerCredentials
+                            {
+                                PlayerId = "player1",
+                                PlayerName = "John Doe"
+                            },
                             PlayerTimestamp = new DateTime(2023, 1, 1, 12, 0, 5, DateTimeKind.Utc),
                             PlayerPoints = 0,
                             PlayerHealth = 100,
@@ -52,8 +55,11 @@ namespace BlueFoxGloveAPI.Tests
                     {
                         new Player
                         {
-                            PlayerId = "Player 1",
-                            PlayerName = "JohnDoe",
+                            Credentials = new PlayerCredentials
+                            {
+                                PlayerId = "player1",
+                                PlayerName = "John Doe"
+                            },
                             PlayerTimestamp = new DateTime(2023, 1, 1, 12, 0, 10, DateTimeKind.Utc),
                             PlayerPoints = 0,
                             PlayerHealth = 100,
@@ -62,8 +68,11 @@ namespace BlueFoxGloveAPI.Tests
                         },
                         new Player
                         {
-                            PlayerId = "Player 2",
-                            PlayerName = "JamesDoe",
+                            Credentials = new PlayerCredentials
+                            {
+                                PlayerId = "player2",
+                                PlayerName = "James Doe"
+                            },
                             PlayerTimestamp = new DateTime(2023, 1, 1, 12, 0, 15, DateTimeKind.Utc),
                             PlayerPoints = 0,
                             PlayerHealth = 100,
@@ -102,8 +111,11 @@ namespace BlueFoxGloveAPI.Tests
             var gameSession = _gameSessions[0];
             var newPlayer = new Player
             {
-                PlayerId = "Player 3",
-                PlayerName = "JacobDoe",
+                Credentials = new PlayerCredentials
+                {
+                    PlayerId = "player3",
+                    PlayerName = "Jacob Doe"
+                },
                 PlayerTimestamp = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
                 PlayerPoints = 0,
                 PlayerHealth = 100,
@@ -144,13 +156,19 @@ namespace BlueFoxGloveAPI.Tests
                 GameSessionTimeStamp = DateTime.Now,
                 PlayersJoiningSession = new List<Player>
                 {
-                    new Player {PlayerId = "playerId", PlayerName = "Jane Doe"}
+                    new Player
+                    {
+                        Credentials = new PlayerCredentials
+                        {
+                            PlayerId = "64dd1cf27a6922a9502fc8be",
+                            PlayerName = "John Doe"
+                        },
+                    }
                 }
             };
-
             _gameSessionCollection
-                .When(collection => collection.InsertOneAsync(newGame))
-                .Do(callback => _gameSessions.Add(newGame));
+               .When(collection => collection.InsertOneAsync(newGame))
+               .Do(callback => _gameSessions.Add(newGame));
 
             //Act 
             await _gameRepository.CreateNewGameSessionAsync(newGame);
