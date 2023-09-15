@@ -16,7 +16,14 @@ namespace BlueFoxGloveAPI.Tests
         public void Setup()
         {
             _playerRepository = Substitute.For<IPlayerRepository>();
-            _player = new Player { PlayerId = "64dd1cf27a6922a9502fc8be", PlayerName = "Jane Doe" };
+            _player = new Player
+            {
+                Credentials = new PlayerCredentials
+                {
+                    PlayerId = "64dd1cf27a6922a9502fc90a",
+                    PlayerName = "Jane Doe"
+                }
+            };
         }
 
         [Test]
@@ -25,10 +32,10 @@ namespace BlueFoxGloveAPI.Tests
             // Arrange
             var expected = _player;
 
-            _playerRepository.GetPlayerByIdAsync(expected.PlayerId).Returns(expected);
+            _playerRepository.GetPlayerByIdAsync(expected.Credentials.PlayerId).Returns(expected);
 
             // Act
-            var result = await _playerRepository.GetPlayerByIdAsync(expected.PlayerId);
+            var result = await _playerRepository.GetPlayerByIdAsync(expected.Credentials.PlayerId);
 
             // Assert
             Assert.AreEqual(expected, result);
@@ -38,7 +45,7 @@ namespace BlueFoxGloveAPI.Tests
         public async Task GetPlayerByIdAsync_WhenPlayerDoesNotExist_ReturnsNull()
         {
             // Arrange
-            string playerId = "nonExistentPlayerId";
+            string playerId = "64dd1cf27a6922a9502fc10s";
             _playerRepository.GetPlayerByIdAsync(playerId).ReturnsNull();
 
             // Act

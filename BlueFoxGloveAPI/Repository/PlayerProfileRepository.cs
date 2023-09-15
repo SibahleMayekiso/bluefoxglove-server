@@ -16,7 +16,7 @@ namespace BlueFoxGloveAPI.Repository
 
         public async Task<List<PlayerProfile>> GetPlayerProfileById(string playerId)
         {
-            var result = await _playerProfileCollection.Find(playerProfile => playerProfile.PlayerId == playerId).ToListAsync();
+            var result = await _playerProfileCollection.Find(playerProfile => playerProfile.Credentials.PlayerId == playerId).ToListAsync();
 
             return result;
         }

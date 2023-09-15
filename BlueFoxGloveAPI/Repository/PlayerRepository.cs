@@ -17,7 +17,7 @@ namespace BlueFoxGloveAPI.Repository
         }
         public async Task<Player> GetPlayerByIdAsync(string playerId)
         {
-            return await _playersCollection.Find(player => player.PlayerId == playerId).FirstOrDefaultAsync();
+            return await _playersCollection.Find(player => player.Credentials.PlayerId == playerId).FirstOrDefaultAsync();
         }
         public async Task UpdatePlayerAsync(Player playerToUpdate)
         {

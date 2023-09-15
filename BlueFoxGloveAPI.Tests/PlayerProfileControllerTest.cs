@@ -19,10 +19,15 @@ namespace BlueFoxGloveAPI.Tests
         {
             _playerProfileRepository = Substitute.For<IPlayerProfileRepository>();
             _playerProfileController = new PlayerProfileController(_playerProfileRepository);
-            _playerProfiles = new List<PlayerProfile> {
-                new PlayerProfile {
-                    PlayerId = "64dd1cf27a6922a9502fc8be",
-                    PlayerName = "JohnDoe001",
+            _playerProfiles = new List<PlayerProfile>
+            {
+                new PlayerProfile
+                {
+                    Credentials = new PlayerCredentials
+                    {
+                        PlayerId = "64dd1cf27a6922a9502fc8be",
+                        PlayerName = "John Doe"
+                    },
                     LongestSurvivalTime = 0,
                     TotalPlayTime = 0,
                     NumberOfGamesPlayed = 0,
@@ -40,7 +45,7 @@ namespace BlueFoxGloveAPI.Tests
 
             _playerProfileRepository
                 .GetPlayerProfileById(playerId)
-                .Returns(Task.FromResult(_playerProfiles.Where(player => player.PlayerId == playerId).ToList()));
+                .Returns(Task.FromResult(_playerProfiles.Where(player => player.Credentials.PlayerId == playerId).ToList()));
 
             //Action
             var result = await _playerProfileController.GetPlayerProfileById(playerId) as ObjectResult;
@@ -59,7 +64,7 @@ namespace BlueFoxGloveAPI.Tests
 
             _playerProfileRepository
                 .GetPlayerProfileById(playerId)
-                .Returns(Task.FromResult(_playerProfiles.Where(player => player.PlayerId == playerId).ToList()));
+                .Returns(Task.FromResult(_playerProfiles.Where(player => player.Credentials.PlayerId == playerId).ToList()));
 
             //Action
             var result = await _playerProfileController.GetPlayerProfileById(playerId) as ObjectResult;
