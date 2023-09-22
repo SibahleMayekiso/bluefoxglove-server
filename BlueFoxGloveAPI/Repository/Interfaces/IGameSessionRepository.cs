@@ -2,7 +2,7 @@
 
 namespace BlueFoxGloveAPI.Repository.Interfaces
 {
-    public interface IGameRepository
+    public interface IGameSessionRepository
     {
         Task<List<GameSession>> GetAllAsync();
         Task<List<Player>> GetPlayersByIdAsync(string GameSessionId, string PlayerId);

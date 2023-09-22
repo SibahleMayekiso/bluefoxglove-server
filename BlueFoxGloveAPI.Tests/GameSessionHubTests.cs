@@ -12,7 +12,7 @@ namespace BlueFoxGloveAPI.Tests
     [TestFixture]
     public class GameSessionHubTests
     {
-        private IGameRepository _gameRepository;
+        private IGameSessionRepository _gameSessionRepository;
         private IPlayerRepository _playerRepository;
         private HubCallerContext _hubCallerContext;
         private IGroupManager _groupManager;
@@ -24,14 +24,14 @@ namespace BlueFoxGloveAPI.Tests
         [SetUp]
         public void SetUp()
         {
-            _gameRepository = Substitute.For<IGameRepository>();
+            _gameSessionRepository = Substitute.For<IGameSessionRepository>();
             _playerRepository = Substitute.For<IPlayerRepository>();
             _groupManager = Substitute.For<IGroupManager>();
             _hubCallerContext = Substitute.For<HubCallerContext>();
             _clients = Substitute.For<IHubCallerClients>();
             _clientProxy = Substitute.For<IClientProxy>();
 
-            _gameHub = new GameSessionHub(_gameRepository, _playerRepository)
+            _gameHub = new GameSessionHub(_gameSessionRepository, _playerRepository)
             {
                 Groups = _groupManager,
                 Context = _hubCallerContext,
@@ -50,8 +50,8 @@ namespace BlueFoxGloveAPI.Tests
                             PlayerId = "player1",
                             PlayerName = "John Doe"
                         },
-                        PlayerTimestamp = DateTime.Now,
-                        PlayerPoints = 0,
+                        PlayerExitTime = DateTime.Now,
+                        PlayerScore = 0,
                         PlayerHealth = 100,
                         PlayerXCoordinate = 100,
                         PlayerYCoordinate = 100
@@ -90,17 +90,17 @@ namespace BlueFoxGloveAPI.Tests
                     PlayerId = "64dd1cf27a6922a9505fc8be",
                     PlayerName = "John Doe"
                 },
-                PlayerTimestamp = DateTime.Now,
-                PlayerPoints = 0,
+                PlayerExitTime = DateTime.Now,
+                PlayerScore = 0,
                 PlayerHealth = 100,
                 PlayerXCoordinate = 100,
                 PlayerYCoordinate = 100
             };
 
             _playerRepository.GetPlayerByIdAsync(expected.Credentials.PlayerId).Returns(expected);
-            _gameRepository.GetGameSessionById(_gameSession.GameSessionId).Returns(_gameSession);
+            _gameSessionRepository.GetGameSessionById(_gameSession.GameSessionId).Returns(_gameSession);
 
-            _gameRepository
+            _gameSessionRepository
                 .When(repository => repository.UpdateGameSessionAsync(_gameSession, expected))
                 .Do(callback => _gameSession.PlayersJoiningSession.Add(expected));
 

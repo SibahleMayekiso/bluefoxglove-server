@@ -4,7 +4,7 @@ using MongoDB.Driver;
 
 namespace BlueFoxGloveAPI.Repository
 {
-    public sealed class GameSessionRepository: IGameRepository
+    public sealed class GameSessionRepository: IGameSessionRepository
     {
         private readonly IMongoCollection<GameSession> _gameSessionCollection;
 
@@ -25,10 +25,6 @@ namespace BlueFoxGloveAPI.Repository
         public async Task CreateNewGameSessionAsync(GameSession newGameSession)
         {
             await _gameSessionCollection.InsertOneAsync(newGameSession);
-        }
-        public Task UpdateGameTime(string gameSessionId, DateTime newTimeStamp)
-        {
-            throw new NotImplementedException();
         }
         public async Task DeleteGamePlayersAsync(Player playersRemoved)
         {

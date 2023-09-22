@@ -8,11 +8,11 @@ namespace BlueFoxGloveAPI.Controllers
     [Route("/")]
     public class GameController: ControllerBase
     {
-        private readonly IGameRepository _gameRepository;
+        private readonly IGameSessionRepository _gameSessionRepository;
 
-        public GameController(IGameRepository gameRepository)
+        public GameController(IGameSessionRepository gameRepository)
         {
-            _gameRepository = gameRepository;
+            _gameSessionRepository = gameRepository;
         }
 
         [HttpPost("[controller]/gamesession")]
@@ -25,7 +25,7 @@ namespace BlueFoxGloveAPI.Controllers
                 return BadRequest("Invalid or incomplete game session data");
             }
 
-            await _gameRepository.CreateNewGameSessionAsync(newGameSession);
+            await _gameSessionRepository.CreateNewGameSessionAsync(newGameSession);
             return CreatedAtAction(nameof(GetAllGameSessions), newGameSession);
         }
 

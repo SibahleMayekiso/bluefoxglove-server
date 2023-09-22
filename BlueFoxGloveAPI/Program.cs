@@ -14,7 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<ICharacterRepository, CharacterRepository>();
-builder.Services.AddSingleton<IGameRepository, GameSessionRepository>();
+builder.Services.AddSingleton<IGameSessionRepository, GameSessionRepository>();
 builder.Services.AddSingleton<IPlayerRepository, PlayerRepository>();
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDBSettings")

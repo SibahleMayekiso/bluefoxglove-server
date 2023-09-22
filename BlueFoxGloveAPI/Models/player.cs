@@ -11,10 +11,10 @@ namespace BlueFoxGloveAPI.Models
         public int PlayerXCoordinate { get; set; }
         [BsonElement("playerYCoordinate")]
         public int PlayerYCoordinate { get; set; }
-        [BsonElement("playerPoints")]
-        public int PlayerPoints { get; set; }
-        [BsonElement("playerTimestamp")]
-        public DateTime PlayerTimestamp { get; set; }
+        [BsonElement("playerScore")]
+        public int PlayerScore { get; set; }
+        [BsonElement("playerExitTime")]
+        public DateTime PlayerExitTime { get; set; }
         [BsonElement("playerHealth")]
         public int PlayerHealth { get; set; }
     }

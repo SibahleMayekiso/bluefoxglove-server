@@ -6,7 +6,7 @@ namespace BlueFoxGloveAPI.Hubs
 {
     public class GameSessionHub: Hub
     {
-        private readonly IGameRepository _gameRepository;
+        private readonly IGameSessionRepository _gameSessionRepository;
         private readonly IPlayerRepository _playerRepository;
         private static readonly Dictionary<string, GameSession> _gameSessions = new Dictionary<string, GameSession>();
         private static readonly object _lockObject = new object();
@@ -15,9 +15,9 @@ namespace BlueFoxGloveAPI.Hubs
         private const int _waitingLobbyTimeLimitInSeconds = 300;
         private int _gameIdCounter = 0;
 
-        public GameSessionHub(IGameRepository gameRepository, IPlayerRepository playerRepository)
+        public GameSessionHub(IGameSessionRepository gameRepository, IPlayerRepository playerRepository)
         {
-            _gameRepository = gameRepository;
+            _gameSessionRepository = gameRepository;
             _playerRepository = playerRepository;
         }
 
@@ -65,7 +65,7 @@ namespace BlueFoxGloveAPI.Hubs
 
                 if (_gameSessions.TryGetValue(oldGameName, out var oldGameSession))
                 {
-                    _gameRepository.CreateNewGameSessionAsync(oldGameSession);
+                    _gameSessionRepository.CreateNewGameSessionAsync(oldGameSession);
                 }
 
                 _gameSessions.Remove(oldGameName);
@@ -91,6 +91,7 @@ namespace BlueFoxGloveAPI.Hubs
 
             return 0;
         }
+
         private int[] GenrateRandomPlayerPosition()
         {
             Random random = new Random();
@@ -99,18 +100,30 @@ namespace BlueFoxGloveAPI.Hubs
 
             return new int[2] { randomXPosition, randomPosition };
         }
+
         public async Task JoinGameSession(string gameSessionId, string playerId)
         {
-            var gameSession = await _gameRepository.GetGameSessionById(gameSessionId);
+            var gameSession = await _gameSessionRepository.GetGameSessionById(gameSessionId);
             var player = await _playerRepository.GetPlayerByIdAsync(playerId);
 
             var playerCoordinates = GenrateRandomPlayerPosition();
             player.PlayerXCoordinate = playerCoordinates[0];
             player.PlayerYCoordinate = playerCoordinates[1];
 
-            var updatedGameSession = await _gameRepository.UpdateGameSessionAsync(gameSession, player);
+            var updatedGameSession = await _gameSessionRepository.UpdateGameSessionAsync(gameSession, player);
 
             await Clients.Group(gameSessionId).SendAsync("PlayerJoiningGame", updatedGameSession);
+        }
+
+        public async Task AddScoreBoardInGameSession(string gameSessionId, string playerId)
+        {
+            var gameSession = await _gameSessionRepository.GetGameSessionById(gameSessionId);
+            var player = await _playerRepository.GetPlayerByIdAsync(playerId);
+            player.PlayerScore += 5;
+
+            var newGameSession = await _gameSessionRepository.UpdateGameSessionAsync(gameSession, player);
+
+            await Clients.Group(gameSessionId).SendAsync("UpdateLeaderBoard", newGameSession.PlayersJoiningSession);
         }
     }
 }

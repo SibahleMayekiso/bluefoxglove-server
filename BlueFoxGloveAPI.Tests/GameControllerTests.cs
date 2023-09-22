@@ -11,13 +11,13 @@ namespace BlueFoxGloveAPI.Tests
     public class GameControllerTest
     {
         private GameController _gameController;
-        private IGameRepository _gameRepository;
+        private IGameSessionRepository _gameSessionRepository;
 
         [SetUp]
         public void Setup()
         {
-            _gameRepository = Substitute.For<IGameRepository>();
-            _gameController = new GameController(_gameRepository);
+            _gameSessionRepository = Substitute.For<IGameSessionRepository>();
+            _gameController = new GameController(_gameSessionRepository);
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace BlueFoxGloveAPI.Tests
                     }
                 }
             };
-            _gameRepository
+            _gameSessionRepository
             .CreateNewGameSessionAsync(Arg.Any<GameSession>())
             .Returns(Task.FromResult(newGame));
 
@@ -100,7 +100,7 @@ namespace BlueFoxGloveAPI.Tests
                 GameSessionTimeStamp = DateTime.Now,
                 PlayersJoiningSession = expected
             };
-            _gameRepository
+            _gameSessionRepository
             .CreateNewGameSessionAsync(Arg.Any<GameSession>())
             .Returns(Task.FromResult(newGame));
 
