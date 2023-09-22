@@ -12,7 +12,7 @@ namespace BlueFoxGloveAPI.Tests
         private IMongoCollection<GameSession> _gameSessionCollection;
         private IMongoDatabase _mongoDatabase;
         private IAsyncCursor<GameSession> _cursor;
-        private GameSessionRepository _gameRepository;
+        private GameSessionRepository _gameSessionRepository;
         private List<GameSession> _gameSessions;
 
         [SetUp]
@@ -22,7 +22,7 @@ namespace BlueFoxGloveAPI.Tests
             _gameSessionCollection = Substitute.For<IMongoCollection<GameSession>>();
             _mongoDatabase.GetCollection<GameSession>("GameSessionCollection").Returns(_gameSessionCollection);
             _cursor = Substitute.For<IAsyncCursor<GameSession>>();
-            _gameRepository = new GameSessionRepository(_mongoDatabase);
+            _gameSessionRepository = new GameSessionRepository(_mongoDatabase);
 
             _gameSessions = new List<GameSession>
             {
@@ -39,8 +39,8 @@ namespace BlueFoxGloveAPI.Tests
                                 PlayerId = "player1",
                                 PlayerName = "John Doe"
                             },
-                            PlayerTimestamp = new DateTime(2023, 1, 1, 12, 0, 5, DateTimeKind.Utc),
-                            PlayerPoints = 0,
+                            PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 5, DateTimeKind.Utc),
+                            PlayerScore = 0,
                             PlayerHealth = 100,
                             PlayerXCoordinate = 100,
                             PlayerYCoordinate = 100
@@ -60,8 +60,8 @@ namespace BlueFoxGloveAPI.Tests
                                 PlayerId = "player1",
                                 PlayerName = "John Doe"
                             },
-                            PlayerTimestamp = new DateTime(2023, 1, 1, 12, 0, 10, DateTimeKind.Utc),
-                            PlayerPoints = 0,
+                            PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 10, DateTimeKind.Utc),
+                             PlayerScore = 0,
                             PlayerHealth = 100,
                             PlayerXCoordinate = 100,
                             PlayerYCoordinate = 100
@@ -73,8 +73,8 @@ namespace BlueFoxGloveAPI.Tests
                                 PlayerId = "player2",
                                 PlayerName = "James Doe"
                             },
-                            PlayerTimestamp = new DateTime(2023, 1, 1, 12, 0, 15, DateTimeKind.Utc),
-                            PlayerPoints = 0,
+                            PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 15, DateTimeKind.Utc),
+                            PlayerScore = 0,
                             PlayerHealth = 100,
                             PlayerXCoordinate = 150,
                             PlayerYCoordinate = 150
@@ -98,7 +98,7 @@ namespace BlueFoxGloveAPI.Tests
                 .ReturnsForAnyArgs(Task.FromResult(_cursor));
 
             //Act
-            var actual = await _gameRepository.GetGameSessionById(gameSessionId);
+            var actual = await _gameSessionRepository.GetGameSessionById(gameSessionId);
 
             //Assert
             Assert.AreEqual(expected, actual);
@@ -116,8 +116,8 @@ namespace BlueFoxGloveAPI.Tests
                     PlayerId = "player3",
                     PlayerName = "Jacob Doe"
                 },
-                PlayerTimestamp = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
-                PlayerPoints = 0,
+                PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
+                PlayerScore = 0,
                 PlayerHealth = 100,
                 PlayerXCoordinate = 150,
                 PlayerYCoordinate = 300
@@ -139,7 +139,7 @@ namespace BlueFoxGloveAPI.Tests
                 .ReturnsForAnyArgs(Task.FromResult(updatedGameSesion));
 
             //Act
-            var result = await _gameRepository.UpdateGameSessionAsync(gameSession, newPlayer);
+            var result = await _gameSessionRepository.UpdateGameSessionAsync(gameSession, newPlayer);
             var actual = result.PlayersJoiningSession;
 
             //Assert
@@ -171,7 +171,7 @@ namespace BlueFoxGloveAPI.Tests
                .Do(callback => _gameSessions.Add(newGame));
 
             //Act 
-            await _gameRepository.CreateNewGameSessionAsync(newGame);
+            await _gameSessionRepository.CreateNewGameSessionAsync(newGame);
 
             //Assert
             Assert.Contains(newGame, _gameSessions);
