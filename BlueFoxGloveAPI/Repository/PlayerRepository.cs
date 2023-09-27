@@ -11,23 +11,23 @@ namespace BlueFoxGloveAPI.Repository
         {
             _playersCollection = mongoDatabase.GetCollection<Player>("players");
         }
-        public async Task CreateNewPlayerAsync(Player newPlayer)
+        public async Task CreateNewPlayer(Player newPlayer)
         {
 
         }
-        public async Task<Player> GetPlayerByIdAsync(string playerId)
+        public async Task<Player> GetPlayerById(string playerId)
         {
             return await _playersCollection.Find(player => player.Credentials.PlayerId == playerId).FirstOrDefaultAsync();
         }
-        public async Task UpdatePlayerAsync(Player playerToUpdate)
+        public async Task UpdatePlayer(Player playerToUpdate)
         {
 
         }
-        public Task<List<Player>> GetAllPlayersAsync()
+        public Task<List<Player>> GetAllPlayers()
         {
             return null;
         }
-        public async Task DeletePlayerAsync(string playerId)
+        public async Task DeletePlayer(string playerId)
         {
 
         }

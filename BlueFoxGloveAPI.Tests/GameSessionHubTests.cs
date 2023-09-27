@@ -97,11 +97,11 @@ namespace BlueFoxGloveAPI.Tests
                 PlayerYCoordinate = 100
             };
 
-            _playerRepository.GetPlayerByIdAsync(expected.Credentials.PlayerId).Returns(expected);
+            _playerRepository.GetPlayerById(expected.Credentials.PlayerId).Returns(expected);
             _gameSessionRepository.GetGameSessionById(_gameSession.GameSessionId).Returns(_gameSession);
 
             _gameSessionRepository
-                .When(repository => repository.UpdateGameSessionAsync(_gameSession, expected))
+                .When(repository => repository.UpdateGameSession(_gameSession, expected))
                 .Do(callback => _gameSession.PlayersJoiningSession.Add(expected));
 
             //Act

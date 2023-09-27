@@ -27,29 +27,29 @@ namespace BlueFoxGloveAPI.Tests
         }
 
         [Test]
-        public async Task GetPlayerByIdAsync_WhenPlayerWithValidIdExists_ReturnsPlayer()
+        public async Task GetPlayerById_WhenPlayerWithValidIdExists_ReturnsPlayer()
         {
             // Arrange
             var expected = _player;
 
-            _playerRepository.GetPlayerByIdAsync(expected.Credentials.PlayerId).Returns(expected);
+            _playerRepository.GetPlayerById(expected.Credentials.PlayerId).Returns(expected);
 
             // Act
-            var result = await _playerRepository.GetPlayerByIdAsync(expected.Credentials.PlayerId);
+            var result = await _playerRepository.GetPlayerById(expected.Credentials.PlayerId);
 
             // Assert
             Assert.AreEqual(expected, result);
         }
 
         [Test]
-        public async Task GetPlayerByIdAsync_WhenPlayerDoesNotExist_ReturnsNull()
+        public async Task GetPlayerById_WhenPlayerDoesNotExist_ReturnsNull()
         {
             // Arrange
             string playerId = "64dd1cf27a6922a9502fc10s";
-            _playerRepository.GetPlayerByIdAsync(playerId).ReturnsNull();
+            _playerRepository.GetPlayerById(playerId).ReturnsNull();
 
             // Act
-            var result = await _playerRepository.GetPlayerByIdAsync(playerId);
+            var result = await _playerRepository.GetPlayerById(playerId);
 
             // Assert
             Assert.IsNull(result);

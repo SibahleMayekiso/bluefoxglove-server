@@ -28,6 +28,7 @@ namespace BlueFoxGloveAPI.Tests
             var newGame = new GameSession
             {
                 GameSessionId = "newGameSessionId",
+                GameName = "1",
                 GameSessionTimeStamp = DateTime.Now,
                 PlayersJoiningSession = new List<Player>
                 {
@@ -42,7 +43,7 @@ namespace BlueFoxGloveAPI.Tests
                 }
             };
             _gameSessionRepository
-            .CreateNewGameSessionAsync(Arg.Any<GameSession>())
+            .CreateNewGameSession(Arg.Any<GameSession>())
             .Returns(Task.FromResult(newGame));
 
             //Act 
@@ -61,6 +62,7 @@ namespace BlueFoxGloveAPI.Tests
             var newGame = new GameSession
             {
                 GameSessionId = "",
+                GameName = "",
                 GameSessionTimeStamp = DateTime.Now,
                 PlayersJoiningSession = new List<Player>()
             };
@@ -97,11 +99,12 @@ namespace BlueFoxGloveAPI.Tests
             var newGame = new GameSession
             {
                 GameSessionId = "newGameSessionId",
+                GameName = "1",
                 GameSessionTimeStamp = DateTime.Now,
                 PlayersJoiningSession = expected
             };
             _gameSessionRepository
-            .CreateNewGameSessionAsync(Arg.Any<GameSession>())
+            .CreateNewGameSession(Arg.Any<GameSession>())
             .Returns(Task.FromResult(newGame));
 
             //Act 

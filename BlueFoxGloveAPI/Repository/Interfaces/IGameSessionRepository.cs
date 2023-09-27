@@ -4,13 +4,13 @@ namespace BlueFoxGloveAPI.Repository.Interfaces
 {
     public interface IGameSessionRepository
     {
-        Task<List<GameSession>> GetAllAsync();
-        Task<List<Player>> GetPlayersByIdAsync(string GameSessionId, string PlayerId);
-        Task CreateNewGameSessionAsync(GameSession newGameSession);
-        Task UpdateGameTimeAsync(string gameSessionId, DateTime newTimeStamp);
-        Task UpdatedPlayerPositionAysnc(string gameSessionId, string playerId, int newX, int newY);
-        Task DeleteGamePlayersAsync(Player playersRemoved);
+        Task<List<GameSession>> GetAll();
+        Task<List<Player>> GetPlayersById(string GameSessionId, string PlayerId);
+        Task CreateNewGameSession(GameSession newGameSession);
+        Task UpdateGameTime(string gameSessionId, DateTime newTimeStamp);
+        Task UpdatedPlayerPosition(string gameSessionId, string playerId, int newX, int newY);
+        Task DeleteGamePlayers(Player playersRemoved);
         Task<GameSession> GetGameSessionById(string gameSessionId);
-        Task<GameSession> UpdateGameSessionAsync(GameSession gameSession, Player newPlayer);
+        Task<GameSession> UpdateGameSession(GameSession gameSession, Player newPlayer);
     }
 }

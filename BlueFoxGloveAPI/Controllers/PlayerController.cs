@@ -30,7 +30,7 @@ namespace BlueFoxGloveAPI.Controllers
         [HttpGet("[controller]/playerprofile/{playerID}")]
         public async Task<IActionResult> GetPlayerProfileById(string playerId)
         {
-            var player = await _playerRepository.GetPlayerByIdAsync(playerId);
+            var player = await _playerRepository.GetPlayerById(playerId);
             if (player == null)
             {
                 return NotFound();
