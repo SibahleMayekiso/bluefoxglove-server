@@ -34,7 +34,7 @@ namespace BlueFoxGloveAPI.Tests
                 }
             };
 
-            _playerRepository.GetPlayerByIdAsync(playerId).Returns(expectedPlayer);
+            _playerRepository.GetPlayerById(playerId).Returns(expectedPlayer);
 
             // Act
             var result = await _playerController.GetPlayerProfileById(playerId);
@@ -48,7 +48,7 @@ namespace BlueFoxGloveAPI.Tests
         {
             // Arrange
             string playerId = "4dd1cf27a6922a9502fc8be";
-            _playerRepository.GetPlayerByIdAsync(playerId).ReturnsNull();
+            _playerRepository.GetPlayerById(playerId).ReturnsNull();
 
             // Act
             IActionResult result = await _playerController.GetPlayerProfileById(playerId);

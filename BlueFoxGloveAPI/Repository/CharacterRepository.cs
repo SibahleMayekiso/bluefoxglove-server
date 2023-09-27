@@ -11,7 +11,7 @@ namespace BlueFoxGloveAPI.Repository
         {
 
         }
-        public async Task<List<Characters>> GetAllAsync()
+        public async Task<List<Characters>> GetAll()
         {
             return null;
         }

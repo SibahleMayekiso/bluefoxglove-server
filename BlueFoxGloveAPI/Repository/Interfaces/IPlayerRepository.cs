@@ -4,10 +4,10 @@ namespace BlueFoxGloveAPI.Repository.Interfaces
 {
     public interface IPlayerRepository
     {
-        Task<List<Player>> GetAllPlayersAsync();
-        Task<Player> GetPlayerByIdAsync(string playerId);
-        Task CreateNewPlayerAsync(Player newPlayer);
-        Task UpdatePlayerAsync(Player playerToUpdate);
-        Task DeletePlayerAsync(string playerId);
+        Task<List<Player>> GetAllPlayers();
+        Task<Player> GetPlayerById(string playerId);
+        Task CreateNewPlayer(Player newPlayer);
+        Task UpdatePlayer(Player playerToUpdate);
+        Task DeletePlayer(string playerId);
     }
 }

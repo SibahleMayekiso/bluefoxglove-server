@@ -1,4 +1,5 @@
 ﻿using BlueFoxGloveAPI.Models;
+using BlueFoxGloveAPI.Repository;
 using BlueFoxGloveAPI.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,22 +11,23 @@ namespace BlueFoxGloveAPI.Controllers
     {
         private readonly IGameSessionRepository _gameSessionRepository;
 
-        public GameController(IGameSessionRepository gameRepository)
+        public GameController(IGameSessionRepository gameSessionRepository)
         {
-            _gameSessionRepository = gameRepository;
+            _gameSessionRepository = gameSessionRepository;
         }
 
         [HttpPost("[controller]/gamesession")]
         public async Task<IActionResult> CreateGameSession(GameSession newGameSession)
         {
-            if (string.IsNullOrWhiteSpace(newGameSession.GameSessionId) ||
+            if (string.IsNullOrWhiteSpace(newGameSession.GameName) ||
                newGameSession.PlayersJoiningSession == null ||
                !newGameSession.PlayersJoiningSession.Any())
             {
                 return BadRequest("Invalid or incomplete game session data");
             }
 
-            await _gameSessionRepository.CreateNewGameSessionAsync(newGameSession);
+            await _gameSessionRepository.CreateNewGameSession(newGameSession);
+
             return CreatedAtAction(nameof(GetAllGameSessions), newGameSession);
         }
 

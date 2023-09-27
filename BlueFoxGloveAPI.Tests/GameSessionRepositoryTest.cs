@@ -105,7 +105,7 @@ namespace BlueFoxGloveAPI.Tests
         }
 
         [Test]
-        public async Task UpdateGameSessionAsync_WhenPlayerJoinsGameSession_GameSessionContainsNewPlayer()
+        public async Task UpdateGameSession_WhenPlayerJoinsGameSession_GameSessionContainsNewPlayer()
         {
             //Arrange
             var gameSession = _gameSessions[0];
@@ -139,7 +139,7 @@ namespace BlueFoxGloveAPI.Tests
                 .ReturnsForAnyArgs(Task.FromResult(updatedGameSesion));
 
             //Act
-            var result = await _gameSessionRepository.UpdateGameSessionAsync(gameSession, newPlayer);
+            var result = await _gameSessionRepository.UpdateGameSession(gameSession, newPlayer);
             var actual = result.PlayersJoiningSession;
 
             //Assert
@@ -147,7 +147,7 @@ namespace BlueFoxGloveAPI.Tests
         }
 
         [Test]
-        public async Task CreateNewGameSessionAsync_CreateValidGameSession_GameSessionCollectionContainsNewGameSession()
+        public async Task CreateNewGameSession_CreateValidGameSession_GameSessionCollectionContainsNewGameSession()
         {
             //Arrange
             var newGame = new GameSession
@@ -171,7 +171,7 @@ namespace BlueFoxGloveAPI.Tests
                .Do(callback => _gameSessions.Add(newGame));
 
             //Act 
-            await _gameSessionRepository.CreateNewGameSessionAsync(newGame);
+            await _gameSessionRepository.CreateNewGameSession(newGame);
 
             //Assert
             Assert.Contains(newGame, _gameSessions);

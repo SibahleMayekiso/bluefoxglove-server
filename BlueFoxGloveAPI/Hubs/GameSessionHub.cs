@@ -65,7 +65,7 @@ namespace BlueFoxGloveAPI.Hubs
 
                 if (_gameSessions.TryGetValue(oldGameName, out var oldGameSession))
                 {
-                    _gameSessionRepository.CreateNewGameSessionAsync(oldGameSession);
+                    _gameSessionRepository.CreateNewGameSession(oldGameSession);
                 }
 
                 _gameSessions.Remove(oldGameName);
@@ -104,13 +104,13 @@ namespace BlueFoxGloveAPI.Hubs
         public async Task JoinGameSession(string gameSessionId, string playerId)
         {
             var gameSession = await _gameSessionRepository.GetGameSessionById(gameSessionId);
-            var player = await _playerRepository.GetPlayerByIdAsync(playerId);
+            var player = await _playerRepository.GetPlayerById(playerId);
 
             var playerCoordinates = GenrateRandomPlayerPosition();
             player.PlayerXCoordinate = playerCoordinates[0];
             player.PlayerYCoordinate = playerCoordinates[1];
 
-            var updatedGameSession = await _gameSessionRepository.UpdateGameSessionAsync(gameSession, player);
+            var updatedGameSession = await _gameSessionRepository.UpdateGameSession(gameSession, player);
 
             await Clients.Group(gameSessionId).SendAsync("PlayerJoiningGame", updatedGameSession);
         }
@@ -118,10 +118,10 @@ namespace BlueFoxGloveAPI.Hubs
         public async Task AddScoreBoardInGameSession(string gameSessionId, string playerId)
         {
             var gameSession = await _gameSessionRepository.GetGameSessionById(gameSessionId);
-            var player = await _playerRepository.GetPlayerByIdAsync(playerId);
+            var player = await _playerRepository.GetPlayerById(playerId);
             player.PlayerScore += 5;
 
-            var newGameSession = await _gameSessionRepository.UpdateGameSessionAsync(gameSession, player);
+            var newGameSession = await _gameSessionRepository.UpdateGameSession(gameSession, player);
 
             await Clients.Group(gameSessionId).SendAsync("UpdateLeaderBoard", newGameSession.PlayersJoiningSession);
         }

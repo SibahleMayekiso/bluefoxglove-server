@@ -12,29 +12,29 @@ namespace BlueFoxGloveAPI.Repository
         {
             _gameSessionCollection = mongoDatabase.GetCollection<GameSession>("GameSessionCollection");
         }
-        public async Task<List<GameSession>> GetAllAsync()
+        public async Task<List<GameSession>> GetAll()
         {
             var filter = Builders<GameSession>.Filter.Empty;
 
             return await _gameSessionCollection.Find(filter).ToListAsync();
         }
-        public Task<List<Player>> GetPlayersByIdAsync(string GameSessionId, string PlayerId)
+        public Task<List<Player>> GetPlayersById(string GameSessionId, string PlayerId)
         {
             return null;
         }
-        public async Task CreateNewGameSessionAsync(GameSession newGameSession)
+        public async Task CreateNewGameSession(GameSession newGameSession)
         {
             await _gameSessionCollection.InsertOneAsync(newGameSession);
         }
-        public async Task DeleteGamePlayersAsync(Player playersRemoved)
+        public async Task DeleteGamePlayers(Player playersRemoved)
         {
             throw new NotImplementedException();
         }
-        public Task UpdateGameTimeAsync(string gameSessionId, DateTime newTimeStamp)
+        public Task UpdateGameTime(string gameSessionId, DateTime newTimeStamp)
         {
             throw new NotImplementedException();
         }
-        public Task UpdatedPlayerPositionAysnc(string gameSessionId, string playerId, int newX, int newY)
+        public Task UpdatedPlayerPosition(string gameSessionId, string playerId, int newX, int newY)
         {
             throw new NotImplementedException();
         }
@@ -48,7 +48,7 @@ namespace BlueFoxGloveAPI.Repository
             return result.Current.FirstOrDefault();
         }
 
-        public async Task<GameSession> UpdateGameSessionAsync(GameSession gameSession, Player newPlayer)
+        public async Task<GameSession> UpdateGameSession(GameSession gameSession, Player newPlayer)
         {
             var updatedPlayersSessionList = new List<Player> { newPlayer };
             updatedPlayersSessionList.AddRange(gameSession.PlayersJoiningSession);
