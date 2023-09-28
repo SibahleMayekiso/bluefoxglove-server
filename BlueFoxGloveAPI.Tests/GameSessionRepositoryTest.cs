@@ -147,7 +147,7 @@ namespace BlueFoxGloveAPI.Tests
         }
 
         [Test]
-        public async Task CreateNewGameSession_CreateValidGameSession_GameSessionCollectionContainsNewGameSession()
+        public async Task CreateNewGameSessionAsync_CreateValidGameSession_GameSessionCollectionContainsNewGameSession()
         {
             //Arrange
             var newGame = new GameSession

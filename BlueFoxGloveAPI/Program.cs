@@ -2,6 +2,8 @@ using BlueFoxGloveAPI.Hubs;
 using BlueFoxGloveAPI.Models;
 using BlueFoxGloveAPI.Repository;
 using BlueFoxGloveAPI.Repository.Interfaces;
+using BlueFoxGloveAPI.Services;
+using BlueFoxGloveAPI.Services.Interfaces;
 using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,7 @@ builder.Services.AddSingleton<ICharacterRepository, CharacterRepository>();
 builder.Services.AddSingleton<IGameSessionRepository, GameSessionRepository>();
 builder.Services.AddSingleton<IPlayerRepository, PlayerRepository>();
 builder.Services.AddSingleton<IPlayerCredentialsRepository, PlayerCredentialsRepository>();
+builder.Services.AddSingleton<IGameSessionService, GameSessionService>();
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDBSettings")
 );

@@ -1,11 +1,15 @@
 ﻿using BlueFoxGloveAPI.Models;
 using BlueFoxGloveAPI.Repository.Interfaces;
+using BlueFoxGloveAPI.Services;
+using BlueFoxGloveAPI.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 
 namespace BlueFoxGloveAPI.Hubs
 {
     public class GameSessionHub: Hub
     {
+        private readonly IGameSessionService _gameSessionService;
+
         private readonly IGameSessionRepository _gameSessionRepository;
         private readonly IPlayerRepository _playerRepository;
         private static readonly Dictionary<string, GameSession> _gameSessions = new Dictionary<string, GameSession>();
@@ -14,6 +18,11 @@ namespace BlueFoxGloveAPI.Hubs
         private const int _maxPlayers = 10;
         private const int _waitingLobbyTimeLimitInSeconds = 300;
         private int _gameIdCounter = 0;
+
+        public GameSessionHub(IGameSessionService gameSessionService)
+        {
+            _gameSessionService = gameSessionService;
+        }
 
         public GameSessionHub(IGameSessionRepository gameRepository, IPlayerRepository playerRepository)
         {
@@ -92,13 +101,13 @@ namespace BlueFoxGloveAPI.Hubs
             return 0;
         }
 
-        private int[] GenrateRandomPlayerPosition()
+        private (int x, int y) GenrateRandomPlayerPosition()
         {
             Random random = new Random();
             int randomXPosition = random.Next(0, 1280);
             int randomPosition = random.Next(0, 720);
 
-            return new int[2] { randomXPosition, randomPosition };
+            return (randomXPosition, randomPosition);
         }
 
         public async Task JoinGameSession(string gameSessionId, string playerId)
@@ -107,8 +116,8 @@ namespace BlueFoxGloveAPI.Hubs
             var player = await _playerRepository.GetPlayerById(playerId);
 
             var playerCoordinates = GenrateRandomPlayerPosition();
-            player.PlayerXCoordinate = playerCoordinates[0];
-            player.PlayerYCoordinate = playerCoordinates[1];
+            player.PlayerXCoordinate = playerCoordinates.x;
+            player.PlayerYCoordinate = playerCoordinates.y;
 
             var updatedGameSession = await _gameSessionRepository.UpdateGameSession(gameSession, player);
 
@@ -124,6 +133,13 @@ namespace BlueFoxGloveAPI.Hubs
             var newGameSession = await _gameSessionRepository.UpdateGameSession(gameSession, player);
 
             await Clients.Group(gameSessionId).SendAsync("UpdateLeaderBoard", newGameSession.PlayersJoiningSession);
+        }
+
+        public async Task UpdatePlayerPostion(string gameSessionId, string playerId, PlayerMovement playerMovement, int xPositionToMoveTo, int yPositionToMoveTo)
+        {
+            var updatedGameSession = await _gameSessionService.UpdatePlayerPostion(gameSessionId, playerId, playerMovement);
+
+            await Clients.Group(gameSessionId).SendAsync("PlayerJoiningGame", updatedGameSession);
         }
     }
 }
