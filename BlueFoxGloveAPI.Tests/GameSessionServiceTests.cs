@@ -104,5 +104,61 @@ namespace BlueFoxGloveAPI.Tests
             //Assert
             Assert.ThrowsAsync<PlayerNotFoundExcpetion>(() => _gameSessionService.UpdatePlayerPostion(gameSessonId, playerId, playerMovement));
         }
+
+        [Test]
+        public async Task UpdatePlayerHealth_WhenPlayerTakesDamage_UpdateGameSessionAsyncCalledWithNewPlayerHealth()
+        {
+            //Arrange
+            var gameSessionId = _gameSession.GameSessionId;
+            var playerId = _gameSession.PlayersJoiningSession[0].Credentials.PlayerId;
+
+            var updatedGameSession = new GameSession
+            {
+                GameSessionId = gameSessionId,
+                PlayersJoiningSession = new List<Player>
+                {
+                    new Player
+                    {
+                        Credentials = new PlayerCredentials
+                        {
+                            PlayerId = playerId,
+                            PlayerName = "John Doe"
+                        },
+                        PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
+                        PlayerScore = 0,
+                        PlayerHealth = 99,
+                        PlayerXCoordinate = 100,
+                        PlayerYCoordinate = 100
+                    }
+                }
+            };
+
+            _gameRepository.GetGameSessionById(gameSessionId).Returns(_gameSession);
+
+            //Act
+            await _gameSessionService.UpdatePlayerHealth(gameSessionId, playerId);
+
+            //Assert
+            await _gameRepository
+                .Received(1)
+                .UpdateGameSession(_gameSession, Arg.Is<Player>(player => player.PlayerHealth == updatedGameSession.PlayersJoiningSession[0].PlayerHealth));
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("!@#$%")]
+        public void UpdatePlayerHealth_WhenInvalidPlayerIdIsUsed_ThrowPlayerNotFoundExcpetion(string playerId)
+        {
+            //Arrange
+            var gameSessionId = _gameSession.GameSessionId;
+
+            _gameRepository.GetGameSessionById(gameSessionId).Returns(_gameSession);
+
+            //Act
+
+            //Assert
+            Assert.ThrowsAsync<PlayerNotFoundExcpetion>(() => _gameSessionService.UpdatePlayerHealth(gameSessionId, playerId));
+        }
     }
 }
