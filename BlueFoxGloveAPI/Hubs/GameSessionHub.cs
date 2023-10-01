@@ -135,11 +135,18 @@ namespace BlueFoxGloveAPI.Hubs
             await Clients.Group(gameSessionId).SendAsync("UpdateLeaderBoard", newGameSession.PlayersJoiningSession);
         }
 
-        public async Task UpdatePlayerPostion(string gameSessionId, string playerId, PlayerMovement playerMovement, int xPositionToMoveTo, int yPositionToMoveTo)
+        public async Task UpdatePlayerPostion(string gameSessionId, string playerId, PlayerMovement playerMovement)
         {
             var updatedGameSession = await _gameSessionService.UpdatePlayerPostion(gameSessionId, playerId, playerMovement);
 
-            await Clients.Group(gameSessionId).SendAsync("PlayerJoiningGame", updatedGameSession);
+            await Clients.Group(gameSessionId).SendAsync("UpdatePlayerPosition", updatedGameSession);
+        }
+
+        public async Task UpdatePlayerHealth(string gameSessionId, string playerId)
+        {
+            var updatedGameSession = await _gameSessionService.UpdatePlayerHealth(gameSessionId, playerId);
+
+            await Clients.Group(gameSessionId).SendAsync("UpdatePlayerHealth", updatedGameSession);
         }
     }
 }

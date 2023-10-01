@@ -58,5 +58,21 @@ namespace BlueFoxGloveAPI.Services
 
             return await _gameRepository.UpdateGameSession(gameSession, player);
         }
+
+        public async Task<GameSession> UpdatePlayerHealth(string gameSessionId, string playerId)
+        {
+            const int damageAmount = 1;
+            var gameSession = await _gameRepository.GetGameSessionById(gameSessionId);
+            Player? player = gameSession.PlayersJoiningSession.Find(_ => _.Credentials.PlayerId == playerId);
+
+            if (player == null)
+            {
+                throw new PlayerNotFoundExcpetion("Player could not be found");
+            }
+
+            player.PlayerHealth -= damageAmount;
+
+            return await _gameRepository.UpdateGameSession(gameSession, player);
+        }
     }
 }
