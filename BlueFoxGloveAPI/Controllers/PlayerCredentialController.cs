@@ -18,7 +18,13 @@ namespace BlueFoxGloveAPI.Controllers
         [HttpGet("/credentials/{playerId}")]
         public async Task<IActionResult> GetPlayersCredentialsById(string playerId)
         {
-            return null;
+            var result = await _playerCredentialsRepository.GetPlayersCredentialsById(playerId);
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
         }
 
         [HttpPost("/credentials")]
