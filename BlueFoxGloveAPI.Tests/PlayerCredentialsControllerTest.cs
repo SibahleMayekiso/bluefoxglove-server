@@ -1,15 +1,10 @@
 ﻿using BlueFoxGloveAPI.Controllers;
 using BlueFoxGloveAPI.Models;
-using BlueFoxGloveAPI.Repository;
 using BlueFoxGloveAPI.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlueFoxGloveAPI.Tests
 {
@@ -25,8 +20,8 @@ namespace BlueFoxGloveAPI.Tests
             _playerCredentialsRepository = Substitute.For<IPlayerCredentialsRepository>();
             _playerCredentialController = new PlayerCredentialController(_playerCredentialsRepository);
         }
-        [Test]
 
+        [Test]
         public async Task CreatePlayer_WhenANewPlayerIsCreated_ReturnsSuccessStatusCode()
         {
             //Arrange
@@ -48,8 +43,8 @@ namespace BlueFoxGloveAPI.Tests
             //Assert
             Assert.AreEqual(expected, actual);
         }
-        [Test]
 
+        [Test]
         public async Task CreatePlayer_WhenPlayerWithAnEmptyNameIsCreated_ReturnsABadRequestError()
         {
             //Arrange
@@ -70,6 +65,42 @@ namespace BlueFoxGloveAPI.Tests
 
             //Assert
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public async Task GetPlayersCredentialsById_WhenPlayerIdIsValid_ReturnThePlayer()
+        {
+            // Arrange
+            string playerId = "64dd1cf27a6922a9502fc90a";
+            var expectedPlayer = new PlayerCredentials
+            {
+                PlayerId = playerId,
+                PlayerName = "Jane Doe"
+
+            };
+
+            _playerCredentialsRepository.GetPlayersCredentialsById(playerId).Returns(expectedPlayer);
+
+            // Act
+            var result = await _playerCredentialController.GetPlayersCredentialsById(playerId);
+
+            // Assert
+            var okResult = result as OkObjectResult;
+            Assert.AreEqual(expectedPlayer, okResult?.Value);
+        }
+
+        [Test]
+        public async Task GetPlayersCredentialsById_WhenAnInvalidPlayerIdIsCalled_ReturnsPlayerNotFound()
+        {
+            // Arrange
+            string playerId = "4dd1cf27a6922a9502fc8be";
+            _playerCredentialsRepository.GetPlayersCredentialsById(playerId).ReturnsNull();
+
+            // Act
+            IActionResult result = await _playerCredentialController.GetPlayersCredentialsById(playerId);
+
+            // Assert
+            Assert.IsInstanceOf<NotFoundResult>(result);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace BlueFoxGloveAPI.Repository
         private readonly IMongoCollection<PlayerCredentials> _playersCredentialsCollection;
         public PlayerCredentialsRepository(IMongoDatabase mongoDatabase)
         {
-            _playersCredentialsCollection = mongoDatabase.GetCollection<PlayerCredentials>("playersCredentialsCollection");
+            _playersCredentialsCollection = mongoDatabase.GetCollection<PlayerCredentials>("PlayerCredentialsCollection");
         }
         public async Task CreatePlayer(PlayerCredentials newPlayer)
         {
@@ -17,7 +17,11 @@ namespace BlueFoxGloveAPI.Repository
         }
         public async Task<PlayerCredentials> GetPlayersCredentialsById(string playerId)
         {
-            return null;
+            var filter = Builders<PlayerCredentials>.Filter.Eq(field => field.PlayerId, playerId);
+
+            var result = await _playersCredentialsCollection.FindAsync(filter);
+
+            return await result.SingleAsync();
         }
         public async Task UpdatePlayerCredentials(PlayerCredentials playerToUpdate)
         {

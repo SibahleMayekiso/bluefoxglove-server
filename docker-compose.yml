@@ -2,8 +2,11 @@ version: '3.4'
 
 services:
   bluefoxgloveapi:
-    container_name: bluefoxglovedemoapi
+    container_name: bluefoxgloveapi
     image: ${DOCKER_REGISTRY-}bluefoxgloveapi
+    ports:
+      - "8080:443"
+      - "8000:80"
     build:
       context: .
       dockerfile: BlueFoxGloveAPI/Dockerfile
