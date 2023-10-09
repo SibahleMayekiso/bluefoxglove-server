@@ -19,7 +19,7 @@ variables:
   stage: test
   script:
     - dotnet restore
-
+  
 .deploy_template: &deploy_definition
   image: docker:20
   stage: deploy
@@ -42,22 +42,26 @@ precommit:
     - dpkg -i packages-microsoft-prod.deb
     - apt-get update
     - apt-get install -y dotnet-sdk-6.0
-
   script:
     - ls -la
     - pre-commit run --all-files --show-diff-on-failure --verbose
-
+  tags:
+    - linux
 build:
   <<: *build_definition
   stage: build
   script:
     - cd BlueFoxGloveAPI
     - dotnet publish --configuration Release --output publish_output
+  tags:
+    - linux
 test:
   <<: *test_definition
   stage: test
   script:
     - cd BlueFoxGloveAPI.Tests
     - dotnet test --configuration Release
+  tags:
+    - linux
 
 
