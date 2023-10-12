@@ -92,6 +92,7 @@ namespace BlueFoxGloveAPI.Tests
             var expected = _gameSessions[0];
 
             _cursor.Current.Returns(new List<GameSession> { expected });
+            _cursor.MoveNextAsync().Returns(Task.FromResult(true));
 
             _gameSessionCollection
                 .FindAsync<GameSession>(Arg.Any<FilterDefinition<GameSession>>())

@@ -42,10 +42,9 @@ namespace BlueFoxGloveAPI.Repository
         public async Task<GameSession> GetGameSessionById(string gameSessionId)
         {
             var filter = Builders<GameSession>.Filter.Eq(field => field.GameSessionId, gameSessionId);
-
             var result = await _gameSessionCollection.FindAsync(filter);
 
-            return result.Current.FirstOrDefault();
+            return await result.SingleAsync();
         }
 
         public async Task<GameSession> UpdateGameSession(GameSession gameSession, Player newPlayer)
