@@ -12,12 +12,6 @@ namespace BlueFoxGloveAPI.Hubs
 
         private readonly IGameSessionRepository _gameSessionRepository;
         private readonly IPlayerRepository _playerRepository;
-        private static readonly Dictionary<string, GameSession> _gameSessions = new Dictionary<string, GameSession>();
-        private static readonly object _lockObject = new object();
-        private Timer? _timer;
-        private const int _maxPlayers = 10;
-        private const int _waitingLobbyTimeLimitInSeconds = 300;
-        private int _gameIdCounter = 0;
 
         public GameSessionHub(IGameSessionService gameSessionService)
         {
@@ -34,71 +28,12 @@ namespace BlueFoxGloveAPI.Hubs
         {
             var httpContext = Context.GetHttpContext();
             var sessionId = httpContext.Request.Query["sessionId"];
+            _gameSessionService.GameSessionId = sessionId;
+
+            await _gameSessionService.CheckGameLobby();
 
             await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
-
-            string gameName;
-
-            lock (_lockObject)
-            {
-                gameName = $"Game_{_gameIdCounter}";
-
-                if (!_gameSessions.ContainsKey(gameName))
-                {
-                    _gameSessions[gameName] = new GameSession
-                    {
-                        GameSessionId = "",
-                        GameName = gameName,
-                        GameSessionTimeStamp = DateTime.UtcNow,
-                        PlayersJoiningSession = new List<Player>()
-                    };
-
-                    _timer = new Timer(state => CreateNewGameSession(gameName), null
-                        , TimeSpan.FromSeconds(_waitingLobbyTimeLimitInSeconds), Timeout.InfiniteTimeSpan);
-                }
-
-                if (PlayersJoiningSession(gameName) <= _maxPlayers)
-                {
-                    Groups.AddToGroupAsync(Context.ConnectionId, gameName);
-                }
-            }
-
             await base.OnConnectedAsync();
-        }
-
-        private void CreateNewGameSession(string oldGameName)
-        {
-            lock (_lockObject)
-            {
-                _timer?.Dispose();
-
-                if (_gameSessions.TryGetValue(oldGameName, out var oldGameSession))
-                {
-                    _gameSessionRepository.CreateNewGameSession(oldGameSession);
-                }
-
-                _gameSessions.Remove(oldGameName);
-                _gameIdCounter++;
-                string newGameName = $"Game_{_gameIdCounter}";
-                _gameSessions[newGameName] = new GameSession
-                {
-                    GameSessionId = "",
-                    GameName = newGameName,
-                    GameSessionTimeStamp = DateTime.UtcNow,
-                    PlayersJoiningSession = new List<Player>()
-                };
-                Groups.AddToGroupAsync(Context.ConnectionId, newGameName);
-            }
-        }
-
-        private int PlayersJoiningSession(string gameName)
-        {
-            if (_gameSessions.TryGetValue(gameName, out var gameSession))
-            {
-                return gameSession.PlayersJoiningSession.Count;
-            }
-
-            return 0;
         }
 
         private (int x, int y) GenrateRandomPlayerPosition()
