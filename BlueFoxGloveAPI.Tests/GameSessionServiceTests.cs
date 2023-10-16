@@ -272,5 +272,75 @@ namespace BlueFoxGloveAPI.Tests
             //Assert
             _lobbyTimer.Received().Change(TimeSpan.FromSeconds(15), TimeSpan.FromSeconds(15));
         }
+
+        [Test]
+        public async Task JoinGameSession_WhenPlayerJoins_ReturnPlayerXCoordinateInBounds()
+        {
+            //Arrange
+            var gameSessionId = _gameSessions[0].GameSessionId;
+            var playerId = _gameSessions[0].PlayersJoiningSession[0].Credentials.PlayerId;
+            var expected = 1280;
+            var player = new Player { Credentials = new PlayerCredentials { PlayerId = playerId, PlayerName = "JjDoe" } };
+            var updatedSession = new GameSession
+            {
+                GameSessionId = _gameSessions[0].GameSessionId,
+                PlayersJoiningSession = new List<Player> { player }
+            };
+
+            _gameRepository.GetGameSessionById(gameSessionId).Returns(_gameSessions[0]);
+            _gameRepository.UpdateGameSession(_gameSessions[0], Arg.Is<Player>(predicate => predicate.Credentials.PlayerId == playerId)).Returns(updatedSession);
+
+            //Act
+            var result = await _gameSessionService.JoinGameSession(gameSessionId, playerId);
+            var actual = result.PlayersJoiningSession[0].PlayerXCoordinate;
+
+            //Assert
+            Assert.LessOrEqual(actual, expected);
+        }
+
+        [Test]
+        public async Task JoinGameSession_WhenPlayerJoins_ReturnPlayerYCoordinateInBounds()
+        {
+            //Arrange
+            var gameSessionId = _gameSessions[0].GameSessionId;
+            var playerId = _gameSessions[0].PlayersJoiningSession[0].Credentials.PlayerId;
+            var expected = 720;
+            var player = new Player { Credentials = new PlayerCredentials { PlayerId = playerId, PlayerName = "JjDoe" } };
+            var updatedSession = new GameSession
+            {
+                GameSessionId = _gameSessions[0].GameSessionId,
+                PlayersJoiningSession = new List<Player> { player }
+            };
+
+            _gameRepository.GetGameSessionById(gameSessionId).Returns(_gameSessions[0]);
+            _gameRepository.UpdateGameSession(_gameSessions[0], Arg.Is<Player>(predicate => predicate.Credentials.PlayerId == playerId)).Returns(updatedSession);
+
+            //Act
+            var result = await _gameSessionService.JoinGameSession(gameSessionId, playerId);
+            var actual = result.PlayersJoiningSession[0].PlayerYCoordinate;
+
+            //Assert
+            Assert.LessOrEqual(actual, expected);
+        }
+
+        [Test]
+        public async Task AddScoreBoardInGameSession_WhenPlayerGains5Points_ReturnScoreDifferenceOf5()
+        {
+            //Arrange
+            var gameSessionId = _gameSessions[0].GameSessionId;
+            var playerId = _gameSessions[0].PlayersJoiningSession[0].Credentials.PlayerId;
+            var scoreBeforeUpdate = _gameSessions[0].PlayersJoiningSession[0].PlayerScore;
+            var expected = 5;
+
+            _gameRepository.GetGameSessionById(gameSessionId).Returns(_gameSessions[0]);
+            _gameRepository.UpdateGameSession(_gameSessions[0], Arg.Is<Player>(predicate => predicate.Credentials.PlayerId == playerId)).Returns(_gameSessions[0]);
+
+            //Act
+            var result = await _gameSessionService.AddScoreBoardInGameSession(gameSessionId, playerId);
+            var actual = Math.Abs(scoreBeforeUpdate - result.PlayersJoiningSession[0].PlayerScore);
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

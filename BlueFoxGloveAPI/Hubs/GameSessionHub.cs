@@ -10,18 +10,9 @@ namespace BlueFoxGloveAPI.Hubs
     {
         private readonly IGameSessionService _gameSessionService;
 
-        private readonly IGameSessionRepository _gameSessionRepository;
-        private readonly IPlayerRepository _playerRepository;
-
         public GameSessionHub(IGameSessionService gameSessionService)
         {
             _gameSessionService = gameSessionService;
-        }
-
-        public GameSessionHub(IGameSessionRepository gameRepository, IPlayerRepository playerRepository)
-        {
-            _gameSessionRepository = gameRepository;
-            _playerRepository = playerRepository;
         }
 
         public override async Task OnConnectedAsync()
@@ -36,36 +27,16 @@ namespace BlueFoxGloveAPI.Hubs
             await base.OnConnectedAsync();
         }
 
-        private (int x, int y) GenrateRandomPlayerPosition()
-        {
-            Random random = new Random();
-            int randomXPosition = random.Next(0, 1280);
-            int randomPosition = random.Next(0, 720);
-
-            return (randomXPosition, randomPosition);
-        }
-
         public async Task JoinGameSession(string gameSessionId, string playerId)
         {
-            var gameSession = await _gameSessionRepository.GetGameSessionById(gameSessionId);
-            var player = await _playerRepository.GetPlayerById(playerId);
-
-            var playerCoordinates = GenrateRandomPlayerPosition();
-            player.PlayerXCoordinate = playerCoordinates.x;
-            player.PlayerYCoordinate = playerCoordinates.y;
-
-            var updatedGameSession = await _gameSessionRepository.UpdateGameSession(gameSession, player);
+            var updatedGameSession = await _gameSessionService.JoinGameSession(gameSessionId, playerId);
 
             await Clients.Group(gameSessionId).SendAsync("PlayerJoiningGame", updatedGameSession);
         }
 
         public async Task AddScoreBoardInGameSession(string gameSessionId, string playerId)
         {
-            var gameSession = await _gameSessionRepository.GetGameSessionById(gameSessionId);
-            var player = await _playerRepository.GetPlayerById(playerId);
-            player.PlayerScore += 5;
-
-            var newGameSession = await _gameSessionRepository.UpdateGameSession(gameSession, player);
+            var newGameSession = await _gameSessionService.AddScoreBoardInGameSession(gameSessionId, playerId);
 
             await Clients.Group(gameSessionId).SendAsync("UpdateLeaderBoard", newGameSession.PlayersJoiningSession);
         }
