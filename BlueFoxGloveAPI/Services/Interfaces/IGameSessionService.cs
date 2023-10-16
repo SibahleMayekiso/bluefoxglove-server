@@ -14,5 +14,6 @@ namespace BlueFoxGloveAPI.Services.Interfaces
         Task CheckGameLobby();
         void StartGameLobby();
         void StartGameSession();
+        Task<GameSession> AddScoreBoardInGameSession(string gameSessionId, string playerId);
     }
 }

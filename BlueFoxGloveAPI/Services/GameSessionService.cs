@@ -9,10 +9,9 @@ namespace BlueFoxGloveAPI.Services
     {
         private readonly ILobbyTimerWrapper _lobbyTimer;
         private readonly IGameSessionRepository _gameSessionRepository;
-        private string _gameSessionId;
         private const int _minimumNumberOfPlayers = 5;
 
-        public string GameSessionId { get => _gameSessionId; set => _gameSessionId = value; }
+        public string GameSessionId { get; set; }
 
         public GameSessionService(IGameSessionRepository gameRepository, ILobbyTimerWrapper lobbyTimer)
         {
@@ -28,12 +27,28 @@ namespace BlueFoxGloveAPI.Services
 
         private (int x, int y) GenrateRandomPlayerPosition()
         {
-            throw new NotImplementedException();
+            Random random = new Random();
+            int randomXPosition = random.Next(0, 1280);
+            int randomPosition = random.Next(0, 720);
+
+            return (randomXPosition, randomPosition);
         }
 
         public async Task<GameSession> JoinGameSession(string gameSessionId, string playerId)
         {
-            throw new NotImplementedException();
+            var gameSession = await _gameSessionRepository.GetGameSessionById(gameSessionId);
+            Player? player = gameSession.PlayersJoiningSession.Find(_ => _.Credentials.PlayerId == playerId);
+
+            if (player == null)
+            {
+                throw new PlayerNotFoundExcpetion("Player could not be found");
+            }
+
+            var playerCoordinates = GenrateRandomPlayerPosition();
+            player.PlayerXCoordinate = playerCoordinates.x;
+            player.PlayerYCoordinate = playerCoordinates.y;
+
+            return await _gameSessionRepository.UpdateGameSession(gameSession, player);
         }
 
         public async Task<GameSession> UpdatePlayerPostion(string gameSessionId, string playerId, PlayerMovement playerMovement)
@@ -97,14 +112,29 @@ namespace BlueFoxGloveAPI.Services
             StartGameSession();
         }
 
-        public void StartGameLobby()
+        public async void StartGameLobby()
         {
-            CheckGameLobby();
+            await CheckGameLobby();
         }
 
         public void StartGameSession()
         {
             _lobbyTimer.Stop();
+        }
+
+        public async Task<GameSession> AddScoreBoardInGameSession(string gameSessionId, string playerId)
+        {
+            var gameSession = await _gameSessionRepository.GetGameSessionById(gameSessionId);
+            var player = gameSession.PlayersJoiningSession.Find(_ => _.Credentials.PlayerId == playerId);
+
+            if (player == null)
+            {
+                throw new PlayerNotFoundExcpetion("Player could not be found");
+            }
+
+            player.PlayerScore += 5;
+
+            return await _gameSessionRepository.UpdateGameSession(gameSession, player);
         }
     }
 }
