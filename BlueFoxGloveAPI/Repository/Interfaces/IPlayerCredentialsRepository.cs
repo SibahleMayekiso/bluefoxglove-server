@@ -6,7 +6,7 @@ namespace BlueFoxGloveAPI.Repository.Interfaces
     {
         Task CreatePlayer(PlayerCredentials newPlayer);
         Task<PlayerCredentials> GetPlayersCredentialsById(string playerId);
-        Task UpdatePlayerCredentials(PlayerCredentials playerToUpdate);
+        Task<PlayerCredentials> UpdatePlayerName(string playerId, string newName);
         Task DeletePlayerCredentials(string playerId);
     }
 }

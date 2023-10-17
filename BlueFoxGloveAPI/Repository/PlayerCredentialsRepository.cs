@@ -23,9 +23,14 @@ namespace BlueFoxGloveAPI.Repository
 
             return await result.SingleAsync();
         }
-        public async Task UpdatePlayerCredentials(PlayerCredentials playerToUpdate)
+        public async Task<PlayerCredentials> UpdatePlayerName(string playerId, string newName)
         {
+            var filter = Builders<PlayerCredentials>.Filter.Eq(player => player.PlayerId, playerId);
+            var update = Builders<PlayerCredentials>.Update.Set(player => player.PlayerName, newName);
 
+            var result = await _playersCredentialsCollection.FindOneAndUpdateAsync<PlayerCredentials>(filter, update);
+
+            return result;
         }
         public async Task DeletePlayerCredentials(string playerId)
         {
