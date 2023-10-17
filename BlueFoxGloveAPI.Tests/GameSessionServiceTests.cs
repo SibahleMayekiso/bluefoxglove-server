@@ -184,7 +184,7 @@ namespace BlueFoxGloveAPI.Tests
             //Act
 
             //Assert
-            Assert.ThrowsAsync<PlayerNotFoundExcpetion>(() => _gameSessionService.UpdatePlayerPostion(gameSessonId, playerId, playerMovement));
+            Assert.ThrowsAsync<PlayerNotFoundException>(() => _gameSessionService.UpdatePlayerPostion(gameSessonId, playerId, playerMovement));
         }
 
         [Test]
@@ -240,7 +240,7 @@ namespace BlueFoxGloveAPI.Tests
             //Act
 
             //Assert
-            Assert.ThrowsAsync<PlayerNotFoundExcpetion>(() => _gameSessionService.UpdatePlayerHealth(gameSessionId, playerId));
+            Assert.ThrowsAsync<PlayerNotFoundException>(() => _gameSessionService.UpdatePlayerHealth(gameSessionId, playerId));
         }
 
         [Test]
@@ -341,6 +341,46 @@ namespace BlueFoxGloveAPI.Tests
 
             //Assert
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void CreateProjectile_WhenProjectileCreatedWithinBounds_ReturnPositionInBounds()
+        {
+            //Arrange
+            var playerId = "651b168a474e72e0a0cbc835";
+            var currentPosition = new Vector { X = 100, Y = 100 };
+            var speed = 5;
+            var velocity = new Vector { X = 1, Y = 1 };
+
+            var expected = currentPosition;
+
+            //Act
+            var actual = _gameSessionService.CreateProjectile(playerId, currentPosition, velocity);
+
+            //Assert
+            Assert.AreEqual(expected, actual.Position);
+        }
+
+        private static IEnumerable<Vector> ProjectileOutOfBoundsTestCases()
+        {
+            yield return new Vector { X = -100, Y = -100 };
+            yield return new Vector { X = 0, Y = -100 };
+            yield return new Vector { X = -100, Y = 0 };
+            yield return new Vector { X = 1000000000, Y = -100 };
+            yield return new Vector { X = 1280, Y = -1000000000 };
+            yield return new Vector { X = 1281, Y = 721 };
+        }
+
+        [TestCaseSource(nameof(ProjectileOutOfBoundsTestCases))]
+        public void CreateProjectile_WhenProjectileCreatedOutOfBounds_ThrowProjectileCreationException(Vector position)
+        {
+            //Arrange
+            var playerId = "651b168a474e72e0a0cbc835";
+            var currentPosition = position;
+            var velocity = new Vector { X = 1, Y = 1 };
+
+            //Assert
+            Assert.Throws<ProjectileCreationException>(() => _gameSessionService.CreateProjectile(playerId, currentPosition, velocity));
         }
     }
 }

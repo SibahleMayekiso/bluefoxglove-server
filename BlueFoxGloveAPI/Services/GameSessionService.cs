@@ -10,8 +10,10 @@ namespace BlueFoxGloveAPI.Services
         private readonly ILobbyTimerWrapper _lobbyTimer;
         private readonly IGameSessionRepository _gameSessionRepository;
         private const int _minimumNumberOfPlayers = 5;
+        private int projectileId = 0;
 
         public string GameSessionId { get; set; }
+        public int ProjectileId { get => projectileId; set => projectileId = value; }
 
         public GameSessionService(IGameSessionRepository gameRepository, ILobbyTimerWrapper lobbyTimer)
         {
@@ -41,7 +43,7 @@ namespace BlueFoxGloveAPI.Services
 
             if (player == null)
             {
-                throw new PlayerNotFoundExcpetion("Player could not be found");
+                throw new PlayerNotFoundException("Player could not be found");
             }
 
             var playerCoordinates = GenrateRandomPlayerPosition();
@@ -58,7 +60,7 @@ namespace BlueFoxGloveAPI.Services
 
             if (player == null)
             {
-                throw new PlayerNotFoundExcpetion("Player could not be found");
+                throw new PlayerNotFoundException("Player could not be found");
             }
 
             switch (playerMovement)
@@ -90,7 +92,7 @@ namespace BlueFoxGloveAPI.Services
 
             if (player == null)
             {
-                throw new PlayerNotFoundExcpetion("Player could not be found");
+                throw new PlayerNotFoundException("Player could not be found");
             }
 
             player.PlayerHealth -= damageAmount;
@@ -129,12 +131,30 @@ namespace BlueFoxGloveAPI.Services
 
             if (player == null)
             {
-                throw new PlayerNotFoundExcpetion("Player could not be found");
+                throw new PlayerNotFoundException("Player could not be found");
             }
 
             player.PlayerScore += 5;
 
             return await _gameSessionRepository.UpdateGameSession(gameSession, player);
+        }
+
+        public Projectile CreateProjectile(string playerId, Vector position, Vector velocity)
+        {
+            const int projectileSpeed = 5;
+            ProjectileId++;
+
+            if (position.X > 1280 || position.X < 0)
+            {
+                throw new ProjectileCreationException();
+            }
+
+            if (position.Y > 720 || position.Y < 0)
+            {
+                throw new ProjectileCreationException();
+            }
+
+            return new Projectile { ProjectileId = ProjectileId, PlayerId = playerId, Position = position, Speed = projectileSpeed, Velocity = velocity };
         }
     }
 }

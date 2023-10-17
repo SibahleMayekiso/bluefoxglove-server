@@ -15,5 +15,7 @@ namespace BlueFoxGloveAPI.Services.Interfaces
         void StartGameLobby();
         void StartGameSession();
         Task<GameSession> AddScoreBoardInGameSession(string gameSessionId, string playerId);
+
+        Projectile CreateProjectile(string playerId, Vector position, Vector velocity);
     }
 }
