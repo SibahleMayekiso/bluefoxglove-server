@@ -39,5 +39,26 @@ namespace BlueFoxGloveAPI.Controllers
 
             return CreatedAtAction(nameof(GetPlayersCredentialsById), new { playerId = newPlayer.PlayerId }, newPlayer);
         }
+
+        [HttpPut("{playerId}")]
+        public async Task<IActionResult> UpdatePlayerName(string playerId, [FromBody] string newName)
+        {
+            if (string.IsNullOrEmpty(playerId) || string.IsNullOrEmpty(newName))
+            {
+                return BadRequest("Invalid request data.");
+            }
+
+            var existingPlayer = await _playerCredentialsRepository.GetPlayersCredentialsById(playerId);
+            if (existingPlayer == null)
+            {
+                return NotFound("Player not found.");
+            }
+
+            existingPlayer.PlayerName = newName;
+
+            await _playerCredentialsRepository.UpdatePlayerName(playerId, newName);
+
+            return NoContent();
+        }
     }
 }

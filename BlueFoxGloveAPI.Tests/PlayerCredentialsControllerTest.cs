@@ -102,5 +102,26 @@ namespace BlueFoxGloveAPI.Tests
             // Assert
             Assert.IsInstanceOf<NotFoundResult>(result);
         }
+        [Test]
+        public async Task UpdatePlayerName_ValidNameInput_ReturnsNoContentResult()
+        {
+            // Arrange
+            string playerId = "64dd1cf27a6922a9502fc90a";
+            string newName = "Jonny Doe";
+
+            var existingPlayer = new PlayerCredentials
+            {
+                PlayerId = playerId,
+                PlayerName = "Jane Doe"
+
+            };
+            _playerCredentialsRepository.GetPlayersCredentialsById(playerId).Returns(existingPlayer);
+
+            //Act
+            var result = await _playerCredentialController.UpdatePlayerName(playerId, newName);
+
+            //Assert
+            Assert.IsInstanceOf<NoContentResult>(result);
+        }
     }
 }

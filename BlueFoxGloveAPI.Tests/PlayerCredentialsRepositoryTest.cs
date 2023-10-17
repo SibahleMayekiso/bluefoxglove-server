@@ -4,13 +4,7 @@ using BlueFoxGloveAPI.Repository;
 using BlueFoxGloveAPI.Repository.Interfaces;
 using MongoDB.Driver;
 using NSubstitute;
-using NSubstitute.ReturnsExtensions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlueFoxGloveAPI.Tests
 {
@@ -86,6 +80,28 @@ namespace BlueFoxGloveAPI.Tests
 
             //Assert
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public async Task UpdatePlayerName_WhenAPlayerUpdatesPlayerName_ReturnsNewPlayerName()
+        {
+            //Arrange
+            var expected = "JD";
+
+            var updatedPlayer = new PlayerCredentials
+            {
+                PlayerId = _playerCredentials[0].PlayerId,
+                PlayerName = _playerCredentials[0].PlayerName
+            };
+            updatedPlayer.PlayerName = expected;
+            _playersCredentailsCollection.FindOneAndUpdateAsync<PlayerCredentials>(Arg.Any<FilterDefinition<PlayerCredentials>>(), Arg.Any<UpdateDefinition<PlayerCredentials>>())
+             .ReturnsForAnyArgs(Task.FromResult(updatedPlayer));
+
+            //Act
+            var actual = await _playerCredentialsRepository.UpdatePlayerName(updatedPlayer.PlayerId, updatedPlayer.PlayerName);
+
+            //Assert
+            Assert.AreEqual(expected, actual.PlayerName);
         }
     }
 }
