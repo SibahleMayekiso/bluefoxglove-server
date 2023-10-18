@@ -2,6 +2,7 @@
 using BlueFoxGloveAPI.Repository;
 using BlueFoxGloveAPI.Repository.Interfaces;
 using BlueFoxGloveAPI.Services.Interfaces;
+using System.Collections.Concurrent;
 
 namespace BlueFoxGloveAPI.Services
 {
@@ -15,11 +16,14 @@ namespace BlueFoxGloveAPI.Services
         public string GameSessionId { get; set; }
         public int ProjectileId { get => projectileId; set => projectileId = value; }
 
+        public ConcurrentDictionary<int, Projectile> ProjectilesInPlay { get; set; }
+
         public GameSessionService(IGameSessionRepository gameRepository, ILobbyTimerWrapper lobbyTimer)
         {
             _gameSessionRepository = gameRepository;
             _lobbyTimer = lobbyTimer;
             _lobbyTimer.Tick += StartGameLobby;
+            ProjectilesInPlay = new ConcurrentDictionary<int, Projectile>();
         }
 
         public void CreateNewGameSession(string oldGameName)
@@ -155,6 +159,13 @@ namespace BlueFoxGloveAPI.Services
             }
 
             return new Projectile { ProjectileId = ProjectileId, PlayerId = playerId, Position = position, Speed = projectileSpeed, Velocity = velocity };
+        }
+
+        public void FireProjectile(string playerId, Vector position, Vector velocity)
+        {
+            var newProjectile = CreateProjectile(playerId, position, velocity);
+
+            ProjectilesInPlay.TryAdd(newProjectile.ProjectileId, newProjectile);
         }
     }
 }
