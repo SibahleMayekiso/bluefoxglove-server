@@ -6,6 +6,7 @@ using BlueFoxGloveAPI.Services;
 using BlueFoxGloveAPI.Services.Interfaces;
 using NSubstitute;
 using NUnit.Framework;
+using System.Collections.Concurrent;
 
 namespace BlueFoxGloveAPI.Tests
 {
@@ -349,7 +350,6 @@ namespace BlueFoxGloveAPI.Tests
             //Arrange
             var playerId = "651b168a474e72e0a0cbc835";
             var currentPosition = new Vector { X = 100, Y = 100 };
-            var speed = 5;
             var velocity = new Vector { X = 1, Y = 1 };
 
             var expected = currentPosition;
@@ -381,6 +381,25 @@ namespace BlueFoxGloveAPI.Tests
 
             //Assert
             Assert.Throws<ProjectileCreationException>(() => _gameSessionService.CreateProjectile(playerId, currentPosition, velocity));
+        }
+
+        [Test]
+        public void FireProjectile_WhenPlayerFires_AddProjectileToCollection()
+        {
+            //Arrange
+            var playerId = "651b168a474e72e0a0cbc835";
+            var currentPosition = new Vector { X = 100, Y = 100 };
+            var velocity = new Vector { X = 1, Y = 1 };
+
+            var expectedProjectile = new Projectile { ProjectileId = 1, PlayerId = playerId, Position = currentPosition, Speed = 5, Velocity = velocity };
+            var expected = expectedProjectile.ProjectileId;
+
+            //Act
+            _gameSessionService?.FireProjectile(playerId, currentPosition, velocity);
+            var actual = _gameSessionService?.ProjectilesInPlay.Values.LastOrDefault()?.ProjectileId;
+
+            //Assert
+            Assert.AreEqual(expected, actual);
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using BlueFoxGloveAPI.Hubs;
 using BlueFoxGloveAPI.Models;
+using System.Collections.Concurrent;
 
 namespace BlueFoxGloveAPI.Services.Interfaces
 {
     public interface IGameSessionService
     {
         string GameSessionId { get; set; }
+        ConcurrentDictionary<int, Projectile> ProjectilesInPlay { get; set; }
 
         void CreateNewGameSession(string oldGameName);
         Task<GameSession> JoinGameSession(string gameSessionId, string playerId);
@@ -17,5 +19,7 @@ namespace BlueFoxGloveAPI.Services.Interfaces
         Task<GameSession> AddScoreBoardInGameSession(string gameSessionId, string playerId);
 
         Projectile CreateProjectile(string playerId, Vector position, Vector velocity);
+
+        void FireProjectile(string playerId, Vector position, Vector velocity);
     }
 }
