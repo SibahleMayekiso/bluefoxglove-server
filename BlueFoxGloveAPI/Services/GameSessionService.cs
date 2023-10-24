@@ -167,5 +167,17 @@ namespace BlueFoxGloveAPI.Services
 
             ProjectilesInPlay.TryAdd(newProjectile.ProjectileId, newProjectile);
         }
+
+        public void DisposeProjectile(int projectileId)
+        {
+            var projectile = ProjectilesInPlay.GetValueOrDefault(projectileId);
+
+            if (projectile == null)
+            {
+                throw new InvalidOperationException($"Something went wrong. Attempted to dispose projectile with ID {projectileId} which does not exist");
+            }
+
+            ProjectilesInPlay.TryRemove(projectileId, out _);
+        }
     }
 }

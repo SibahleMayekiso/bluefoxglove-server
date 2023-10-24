@@ -21,6 +21,7 @@ namespace BlueFoxGloveAPI.Tests
         [SetUp]
         public void SetUp()
         {
+
             _gameSessions = new List<GameSession>
             {
                 new GameSession
@@ -400,6 +401,48 @@ namespace BlueFoxGloveAPI.Tests
 
             //Assert
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void DisposeProjectile_WhenProjectileIsInactive_RemoveProjectileToCollection()
+        {
+            //Arrange
+            _gameSessionService.ProjectilesInPlay = new ConcurrentDictionary<int, Projectile>(new Dictionary<int, Projectile>
+            {
+                { 1, new Projectile { ProjectileId = 1, PlayerId = "player1", Position = new Vector { X = 100, Y = 100 }, Speed = 5, Velocity = new Vector { X = 1, Y = 1 } }}
+            });
+
+            //Act
+            _gameSessionService.DisposeProjectile(1);
+            var actual = _gameSessionService.ProjectilesInPlay.Keys;
+
+            //Assert
+            CollectionAssert.DoesNotContain(actual, 1);
+        }
+
+        [Test]
+        public void DisposeProjectile_WhenNonExistantProjectileIdIsUsed_ThrowInvalidOperationException()
+        {
+            //Arrange
+            _gameSessionService.ProjectilesInPlay = new ConcurrentDictionary<int, Projectile>(new Dictionary<int, Projectile>
+            {
+                {
+                    1,
+                    new Projectile
+                    {
+                        ProjectileId = 1,
+                        PlayerId = "player1",
+                        Position = new Vector { X = 100, Y = 100 },
+                        Speed = 5,
+                        Velocity = new Vector { X = 1, Y = 1 }
+                    }
+                }
+            });
+
+            var invalidProjecileId = 2;
+
+            //Assert
+            Assert.Throws<InvalidOperationException>(() => _gameSessionService.DisposeProjectile(invalidProjecileId));
         }
     }
 }
