@@ -1,5 +1,4 @@
 ﻿using BlueFoxGloveAPI.Models;
-using BlueFoxGloveAPI.Repository;
 using BlueFoxGloveAPI.Repository.Interfaces;
 using BlueFoxGloveAPI.Services.Interfaces;
 using System.Collections.Concurrent;
@@ -11,10 +10,9 @@ namespace BlueFoxGloveAPI.Services
         private readonly ILobbyTimerWrapper _lobbyTimer;
         private readonly IGameSessionRepository _gameSessionRepository;
         private const int _minimumNumberOfPlayers = 5;
-        private int projectileId = 0;
 
         public string GameSessionId { get; set; }
-        public int ProjectileId { get => projectileId; set => projectileId = value; }
+        public int ProjectileId { get; set; } = 0;
 
         public ConcurrentDictionary<int, Projectile> ProjectilesInPlay { get; set; }
 
@@ -178,6 +176,22 @@ namespace BlueFoxGloveAPI.Services
             }
 
             ProjectilesInPlay.TryRemove(projectileId, out _);
+        }
+
+        public void UpdateProjectilePosition(int projectileId)
+        {
+            var projectile = ProjectilesInPlay.GetValueOrDefault(projectileId);
+
+            if (projectile == null)
+            {
+                throw new InvalidOperationException($"Something went wrong. Attempted to dispose projectile with ID {projectileId} which does not exist");
+            }
+
+            Vector updatedProjectilePosition = projectile.Position;
+            updatedProjectilePosition.X += projectile.Velocity.X;
+            updatedProjectilePosition.Y += projectile.Velocity.Y;
+
+            projectile.Position = updatedProjectilePosition;
         }
     }
 }
