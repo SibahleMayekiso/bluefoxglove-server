@@ -17,7 +17,9 @@ namespace BlueFoxGloveAPI.Controllers
         [HttpGet("[controller]/{characterId}")]
         public async Task<IActionResult> GetCharacter(string characterId)
         {
-            return null;
+            var result = await _characterRepository.GetCharacterById(characterId);
+
+            return result == null ? BadRequest("Unable to retrieve selected Character") : Ok(result);
         }
     }
 }

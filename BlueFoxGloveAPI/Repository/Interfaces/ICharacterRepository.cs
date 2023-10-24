@@ -4,6 +4,6 @@ namespace BlueFoxGloveAPI.Repository.Interfaces
 {
     public interface ICharacterRepository
     {
-        Task<List<Characters>> GetAll();
+        Task<Characters> GetCharacterById(string characterId);
     }
 }

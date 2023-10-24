@@ -1,9 +1,13 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace BlueFoxGloveAPI.Models
 {
     public class Characters
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string CharacterId { get; set; }
         [BsonElement("charactername")]
         public string CharacterName { get; set; }
         [BsonElement("characterType")]
@@ -11,6 +15,6 @@ namespace BlueFoxGloveAPI.Models
         [BsonElement("characterMaxHealth")]
         public int CharacterMaxHealth { get; set; }
         [BsonElement("characterMaxSpeed")]
-        public int CharacterMaxSpeed { get; set; }
+        public double CharacterMaxSpeed { get; set; }
     }
 }
