@@ -21,5 +21,6 @@ namespace BlueFoxGloveAPI.Services.Interfaces
         Projectile CreateProjectile(string playerId, Vector position, Vector velocity);
 
         void FireProjectile(string playerId, Vector position, Vector velocity);
+        void DisposeProjectile(int projectileId);
     }
 }
