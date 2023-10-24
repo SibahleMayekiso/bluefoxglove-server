@@ -444,5 +444,40 @@ namespace BlueFoxGloveAPI.Tests
             //Assert
             Assert.Throws<InvalidOperationException>(() => _gameSessionService.DisposeProjectile(invalidProjecileId));
         }
+
+        [Test]
+        public void UpdateProjectilePosition_WhenVelocityIsValid_ReturnProjectileInNewPosition()
+        {
+            //Arrange
+            var projectileId = 1;
+            _gameSessionService.ProjectilesInPlay = new ConcurrentDictionary<int, Projectile>(new Dictionary<int, Projectile>
+            {
+                { 1, new Projectile { ProjectileId = projectileId, PlayerId = "player1", Position = new Vector { X = 100, Y = 100 }, Speed = 5, Velocity = new Vector { X = 1, Y = 1 } }}
+            });
+            var expected = new Vector { X = 101, Y = 101 };
+
+            //Act
+            _gameSessionService.UpdateProjectilePosition(projectileId);
+            var actual = _gameSessionService.ProjectilesInPlay[1].Position;
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void UpdateProjectilePosition_WhenInvalidProjectileIdIsUsed_ThrowInvalidOperationException()
+        {
+            //Arrange
+            var projectileId = 2;
+            _gameSessionService.ProjectilesInPlay = new ConcurrentDictionary<int, Projectile>(new Dictionary<int, Projectile>
+            {
+                { 1, new Projectile { ProjectileId = projectileId, PlayerId = "player1", Position = new Vector { X = 100, Y = 100 }, Speed = 5, Velocity = new Vector { X = 1, Y = 1 } }}
+            });
+
+            //Act
+
+            //Assert
+            Assert.Throws<InvalidOperationException>(() => _gameSessionService.UpdateProjectilePosition(projectileId));
+        }
     }
 }

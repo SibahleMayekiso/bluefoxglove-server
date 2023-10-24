@@ -68,5 +68,12 @@ namespace BlueFoxGloveAPI.Hubs
 
             await Clients.Group(gameSessionId).SendAsync("DisposeProjectile", _gameSessionService.ProjectilesInPlay);
         }
+
+        public async Task UpdateProjectilePosition(string gameSessionId, int projectileId)
+        {
+            _gameSessionService.UpdateProjectilePosition(projectileId);
+
+            await Clients.Group(gameSessionId).SendAsync("UpdateProjectilePosition", _gameSessionService.ProjectilesInPlay);
+        }
     }
 }
