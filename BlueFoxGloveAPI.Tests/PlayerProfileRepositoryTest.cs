@@ -1,5 +1,7 @@
 ﻿using BlueFoxGloveAPI.Models;
+using BlueFoxGloveAPI.Repository;
 using BlueFoxGloveAPI.Repository.Interfaces;
+using MongoDB.Driver;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -8,12 +10,25 @@ namespace BlueFoxGloveAPI.Tests
     [TestFixture]
     public class PlayerProfileRepositoryTest
     {
+        private IMongoCollection<PlayerProfile> _playerProfileCollection;
+        private IMongoCollection<Characters> _characterCollection;
+        private IMongoDatabase _mongoDatabase;
+        private IAsyncCursor<Characters> _cursor;
         private IPlayerProfileRepository _playerProfileRepository;
+        private PlayerProfileRepository _profileRepository;
         private List<PlayerProfile> _playerProfiles;
 
         [SetUp]
         public void Setup()
         {
+            _mongoDatabase = Substitute.For<IMongoDatabase>();
+            _playerProfileCollection = Substitute.For<IMongoCollection<PlayerProfile>>();
+            _characterCollection = Substitute.For<IMongoCollection<Characters>>();
+            _mongoDatabase.GetCollection<PlayerProfile>("PlayerProfileCollection").Returns(_playerProfileCollection);
+            _mongoDatabase.GetCollection<Characters>("CharacterCollection").Returns(_characterCollection);
+            _cursor = Substitute.For<IAsyncCursor<Characters>>();
+            _profileRepository = new PlayerProfileRepository(_mongoDatabase);
+
             _playerProfileRepository = Substitute.For<IPlayerProfileRepository>();
             _playerProfiles = new List<PlayerProfile>
             {
@@ -63,6 +78,50 @@ namespace BlueFoxGloveAPI.Tests
 
             //Action
             var actual = _playerProfileRepository.GetPlayerProfileById(playerId).Result;
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public async Task UpdateSelectedCharacter_WithValidCharacterId_ReturnPlayerProfileWithUpdatedSelectedCharacter()
+        {
+            //Arrange
+            var playerId = "64da1cf27a6922a9502fc8b4";
+            var characterId = "64d11cf27a6922a9505fc8be";
+            var updatedPlayer = new PlayerProfile
+            {
+                Credentials = new PlayerCredentials { PlayerId = playerId, PlayerName = "Player1" },
+                SelectedCharacter = new Characters
+                {
+                    CharacterId = "64d11cf27a6922a9505fc8be",
+                    CharacterName = "Guppy",
+                    CharacterType = "Soldier",
+                    CharacterMaxHealth = 100,
+                    CharacterMaxSpeed = 5.00
+                },
+                KillCount = 0,
+                LongestSurvivalTime = 0,
+                NumberOfGamesPlayed = 0,
+                TotalPlayTime = 0
+            };
+
+            var expected = updatedPlayer.SelectedCharacter;
+
+            _cursor.Current.Returns(new List<Characters> { expected });
+            _cursor.MoveNextAsync().Returns(Task.FromResult(true));
+
+            _characterCollection
+                .FindAsync<Characters>(Builders<Characters>.Filter.Eq(filed => filed.CharacterId, characterId))
+                .Returns(Task.FromResult(_cursor));
+
+            _playerProfileCollection
+                .FindOneAndUpdateAsync<PlayerProfile>(Arg.Any<FilterDefinition<PlayerProfile>>(), Arg.Any<UpdateDefinition<PlayerProfile>>())
+                .Returns(Task.FromResult(updatedPlayer));
+
+            //Act
+            var result = await _profileRepository.UpdateSelectedCharacter(playerId, characterId);
+            var actual = result.SelectedCharacter;
 
             //Assert
             Assert.AreEqual(expected, actual);

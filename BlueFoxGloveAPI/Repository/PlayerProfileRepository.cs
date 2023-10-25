@@ -8,10 +8,12 @@ namespace BlueFoxGloveAPI.Repository
     public class PlayerProfileRepository: IPlayerProfileRepository
     {
         private readonly IMongoCollection<PlayerProfile> _playerProfileCollection;
+        private readonly IMongoCollection<Characters> _characterCollection;
 
         public PlayerProfileRepository(IMongoDatabase mongoDatabase)
         {
-            _playerProfileCollection = mongoDatabase.GetCollection<PlayerProfile>("playerProfileCollection");
+            _playerProfileCollection = mongoDatabase.GetCollection<PlayerProfile>("PlayerProfileCollection");
+            _characterCollection = mongoDatabase.GetCollection<Characters>("CharacterCollection");
         }
 
         public async Task<List<PlayerProfile>> GetPlayerProfileById(string playerId)
@@ -19,6 +21,17 @@ namespace BlueFoxGloveAPI.Repository
             var result = await _playerProfileCollection.Find(playerProfile => playerProfile.Credentials.PlayerId == playerId).ToListAsync();
 
             return result;
+        }
+
+        public async Task<PlayerProfile> UpdateSelectedCharacter(string playerId, string characterId)
+        {
+            var characterFilter = Builders<Characters>.Filter.Eq(filed => filed.CharacterId, characterId);
+            var character = await _characterCollection.FindAsync(characterFilter);
+
+            var playerProfileFilter = Builders<PlayerProfile>.Filter.Eq(field => field.Credentials.PlayerId, playerId);
+            var update = Builders<PlayerProfile>.Update.Set(field => field.SelectedCharacter, character.SingleOrDefault());
+
+            return await _playerProfileCollection.FindOneAndUpdateAsync(playerProfileFilter, update);
         }
     }
 }
