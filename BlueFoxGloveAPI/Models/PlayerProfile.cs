@@ -8,6 +8,8 @@ namespace BlueFoxGloveAPI.Models
     {
         [BsonElement("PlayerCredentials")]
         public PlayerCredentials Credentials { get; set; }
+        [BsonElement("selectedCharacter")]
+        public Characters SelectedCharacter { get; set; }
         [BsonElement("longestSurvivalTime"), DefaultValue(0)]
         public int LongestSurvivalTime { get; set; }
         [BsonElement("totalPlayTime"), DefaultValue(0)]

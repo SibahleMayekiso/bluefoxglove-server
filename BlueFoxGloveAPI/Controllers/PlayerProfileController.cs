@@ -26,5 +26,12 @@ namespace BlueFoxGloveAPI.Controllers
 
             return Ok(playerProfile);
         }
+
+        public async Task<IActionResult> UpdateSelectedCharacter(string playerId, string characterId)
+        {
+            var result = await _playerProfileRepository.UpdateSelectedCharacter(playerId, characterId);
+
+            return result == null ? BadRequest("Unable to update selected Character") : Ok(result);
+        }
     }
 }
