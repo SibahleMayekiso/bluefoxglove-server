@@ -8,6 +8,7 @@ namespace BlueFoxGloveAPI.Services.Interfaces
     {
         string GameSessionId { get; set; }
         ConcurrentDictionary<int, Projectile> ProjectilesInPlay { get; set; }
+        List<Player> SurvivngPlayers { get; set; }
 
         void CreateNewGameSession(string oldGameName);
         Task<GameSession> JoinGameSession(string gameSessionId, string playerId);
@@ -16,6 +17,7 @@ namespace BlueFoxGloveAPI.Services.Interfaces
         Task CheckGameLobby();
         void StartGameLobby();
         void StartGameSession();
+        void EndGameSession();
         Task<GameSession> AddScoreBoardInGameSession(string gameSessionId, string playerId);
 
         Projectile CreateProjectile(string playerId, Vector position, Vector velocity);
@@ -23,5 +25,6 @@ namespace BlueFoxGloveAPI.Services.Interfaces
         void FireProjectile(string playerId, Vector position, Vector velocity);
         void DisposeProjectile(int projectileId);
         void UpdateProjectilePosition(int projectileId);
+        Task CheckSurvivingPlayers();
     }
 }

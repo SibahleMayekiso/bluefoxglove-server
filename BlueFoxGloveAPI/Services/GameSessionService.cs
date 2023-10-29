@@ -8,19 +8,22 @@ namespace BlueFoxGloveAPI.Services
     public sealed class GameSessionService: IGameSessionService
     {
         private readonly ILobbyTimerWrapper _lobbyTimer;
+        private readonly IGameSessionTimerWrapper _gameSessionTimer;
         private readonly IGameSessionRepository _gameSessionRepository;
         private const int _minimumNumberOfPlayers = 5;
 
         public string GameSessionId { get; set; }
         public int ProjectileId { get; set; } = 0;
-
         public ConcurrentDictionary<int, Projectile> ProjectilesInPlay { get; set; }
+        public List<Player> SurvivngPlayers { get; set; }
 
-        public GameSessionService(IGameSessionRepository gameRepository, ILobbyTimerWrapper lobbyTimer)
+        public GameSessionService(IGameSessionRepository gameRepository, ILobbyTimerWrapper lobbyTimer, IGameSessionTimerWrapper gameSessionTimer)
         {
             _gameSessionRepository = gameRepository;
             _lobbyTimer = lobbyTimer;
+            _gameSessionTimer = gameSessionTimer;
             _lobbyTimer.Tick += StartGameLobby;
+            _gameSessionTimer.Tick += EndGameSession;
             ProjectilesInPlay = new ConcurrentDictionary<int, Projectile>();
         }
 
@@ -116,6 +119,15 @@ namespace BlueFoxGloveAPI.Services
             StartGameSession();
         }
 
+        public async Task CheckSurvivingPlayers()
+        {
+            var gameSession = await _gameSessionRepository.GetGameSessionById(GameSessionId);
+
+            var survivingPlayers = gameSession.PlayersJoiningSession.FindAll(_ => _.PlayerHealth > 0);
+
+            SurvivngPlayers = survivingPlayers;
+        }
+
         public async void StartGameLobby()
         {
             await CheckGameLobby();
@@ -124,6 +136,12 @@ namespace BlueFoxGloveAPI.Services
         public void StartGameSession()
         {
             _lobbyTimer.Stop();
+            _gameSessionTimer.Start();
+        }
+
+        public async void EndGameSession()
+        {
+            await CheckSurvivingPlayers();
         }
 
         public async Task<GameSession> AddScoreBoardInGameSession(string gameSessionId, string playerId)
