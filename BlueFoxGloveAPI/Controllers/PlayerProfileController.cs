@@ -27,7 +27,8 @@ namespace BlueFoxGloveAPI.Controllers
             return Ok(playerProfile);
         }
 
-        public async Task<IActionResult> UpdateSelectedCharacter(string playerId, string characterId)
+        [HttpPatch("/playerprofile/{playerId}")]
+        public async Task<IActionResult> UpdateSelectedCharacter(string playerId, [FromBody] string characterId)
         {
             var result = await _playerProfileRepository.UpdateSelectedCharacter(playerId, characterId);
 
