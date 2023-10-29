@@ -14,6 +14,7 @@ namespace BlueFoxGloveAPI.Tests
     internal class GameSessionServiceTests
     {
         private ILobbyTimerWrapper _lobbyTimer;
+        private IGameSessionTimerWrapper _gameSessionTimer;
         private IGameSessionRepository _gameRepository;
         private GameSessionService _gameSessionService;
         private List<GameSession> _gameSessions;
@@ -61,8 +62,8 @@ namespace BlueFoxGloveAPI.Tests
                                 PlayerName = "John Doe"
                             },
                             PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
-                            PlayerScore = 0,
-                            PlayerHealth = 100,
+                            PlayerScore = 20,
+                            PlayerHealth = 80,
                             PlayerXCoordinate = 100,
                             PlayerYCoordinate = 100
                         },
@@ -75,7 +76,7 @@ namespace BlueFoxGloveAPI.Tests
                             },
                             PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
                             PlayerScore = 0,
-                            PlayerHealth = 100,
+                            PlayerHealth = 0,
                             PlayerXCoordinate = 100,
                             PlayerYCoordinate = 100
                         },
@@ -84,25 +85,25 @@ namespace BlueFoxGloveAPI.Tests
                             Credentials = new PlayerCredentials
                             {
                                 PlayerId = "player3",
-                                PlayerName = "John Doe"
+                                PlayerName = "Jane Doe"
                             },
                             PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
-                            PlayerScore = 0,
-                            PlayerHealth = 100,
+                            PlayerScore = 10,
+                            PlayerHealth = 50,
                             PlayerXCoordinate = 100,
-                            PlayerYCoordinate = 100
+                            PlayerYCoordinate = 500
                         },
                         new Player
                         {
                             Credentials = new PlayerCredentials
                             {
                                 PlayerId = "player4",
-                                PlayerName = "John Doe"
+                                PlayerName = "Joe Doe"
                             },
                             PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
-                            PlayerScore = 0,
-                            PlayerHealth = 100,
-                            PlayerXCoordinate = 100,
+                            PlayerScore = 10,
+                            PlayerHealth = 55,
+                            PlayerXCoordinate = 500,
                             PlayerYCoordinate = 100
                         },
                         new Player
@@ -114,7 +115,7 @@ namespace BlueFoxGloveAPI.Tests
                             },
                             PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
                             PlayerScore = 0,
-                            PlayerHealth = 100,
+                            PlayerHealth = 0,
                             PlayerXCoordinate = 100,
                             PlayerYCoordinate = 100
                         }
@@ -123,8 +124,9 @@ namespace BlueFoxGloveAPI.Tests
             };
 
             _lobbyTimer = Substitute.For<ILobbyTimerWrapper>();
+            _gameSessionTimer = Substitute.For<IGameSessionTimerWrapper>();
             _gameRepository = Substitute.For<IGameSessionRepository>();
-            _gameSessionService = new GameSessionService(_gameRepository, _lobbyTimer);
+            _gameSessionService = new GameSessionService(_gameRepository, _lobbyTimer, _gameSessionTimer);
         }
 
         [TestCase(100, 99, PlayerMovement.MOVEUP)]
@@ -478,6 +480,69 @@ namespace BlueFoxGloveAPI.Tests
 
             //Assert
             Assert.Throws<InvalidOperationException>(() => _gameSessionService.UpdateProjectilePosition(projectileId));
+        }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        [TestCase(2)]
+        public async Task CheckSurvivingPlayers_WhenGameSessionEnds_PopulateSurvingPlayersListWithSurvivors(int playerIndex)
+        {
+            //Arrange
+            _gameSessionService.GameSessionId = _gameSessions[1].GameSessionId;
+
+            _gameRepository.GetGameSessionById(_gameSessionService.GameSessionId).Returns(_gameSessions[1]);
+
+            var survingPlayers = new List<Player>
+            {
+                new Player
+                {
+                    Credentials = new PlayerCredentials
+                    {
+                        PlayerId = "player1",
+                        PlayerName = "John Doe"
+                    },
+                    PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
+                    PlayerScore = 20,
+                    PlayerHealth = 80,
+                    PlayerXCoordinate = 100,
+                    PlayerYCoordinate = 100
+                },
+                new Player
+                {
+                    Credentials = new PlayerCredentials
+                    {
+                        PlayerId = "player3",
+                        PlayerName = "Jane Doe"
+                    },
+                    PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
+                    PlayerScore = 10,
+                    PlayerHealth = 50,
+                    PlayerXCoordinate = 100,
+                    PlayerYCoordinate = 500
+                },
+                new Player
+                {
+                    Credentials = new PlayerCredentials
+                    {
+                        PlayerId = "player4",
+                        PlayerName = "Joe Doe"
+                    },
+                    PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
+                    PlayerScore = 10,
+                    PlayerHealth = 55,
+                    PlayerXCoordinate = 500,
+                    PlayerYCoordinate = 100
+                }
+            };
+
+            var expected = survingPlayers[playerIndex].Credentials.PlayerId;
+
+            //Act
+            await _gameSessionService.CheckSurvivingPlayers();
+            var actual = _gameSessionService.SurvivngPlayers[playerIndex].Credentials.PlayerId;
+
+            //Assert
+            Assert.AreEqual(expected, actual);
         }
     }
 }

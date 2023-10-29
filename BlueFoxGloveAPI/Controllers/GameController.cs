@@ -1,6 +1,7 @@
 ﻿using BlueFoxGloveAPI.Models;
 using BlueFoxGloveAPI.Repository;
 using BlueFoxGloveAPI.Repository.Interfaces;
+using BlueFoxGloveAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlueFoxGloveAPI.Controllers
@@ -10,10 +11,12 @@ namespace BlueFoxGloveAPI.Controllers
     public class GameController: ControllerBase
     {
         private readonly IGameSessionRepository _gameSessionRepository;
+        private readonly IGameSessionService _gameSessionService;
 
-        public GameController(IGameSessionRepository gameSessionRepository)
+        public GameController(IGameSessionRepository gameSessionRepository, IGameSessionService gameSessionService)
         {
             _gameSessionRepository = gameSessionRepository;
+            _gameSessionService = gameSessionService;
         }
 
         [HttpPost("[controller]/gamesession")]
@@ -32,57 +35,15 @@ namespace BlueFoxGloveAPI.Controllers
         }
 
         [HttpGet("[controller]/gamesession")]
-        public async Task<IActionResult> GetAllGameSessions()
+        public Task<IActionResult> GetAllGameSessions()
         {
             return null;
         }
 
-        [HttpGet("[controller]/gamesession/{gameSessionId}")]
-        public async Task<IActionResult> GetGameSessionById(string gameSessionId)
+        [HttpGet("[controller]/survivingPlayers")]
+        public IActionResult GetSurvivingPlayersInGameSession()
         {
-            return null;
-        }
-
-        [HttpPut("[controller]/playerjointime/{gameSessionId}")]
-        public async Task<IActionResult> UpdatePlayerJoinTime(Player player)
-        {
-            return null;
-        }
-
-        [HttpGet("[controller]/playerpostion/{playerID}")]
-        public async Task<IActionResult> GetPlayerPosition(string playerID)
-        {
-            return null;
-        }
-
-        [HttpPut("[controller]/playerpostion")]
-        public async Task<IActionResult> UpdatePlayerPosition(Player player)
-        {
-            return null;
-        }
-
-        [HttpGet("[controller]/playerhealth/{playerID}")]
-        public async Task<IActionResult> GetPlayerHealth(string playerID)
-        {
-            return null;
-        }
-
-        [HttpPut("[controller]/playerhealth")]
-        public async Task<IActionResult> UpdatePlayerHealth(Player player)
-        {
-            return null;
-        }
-
-        [HttpGet("[controller]/playerpoints/{playerID}")]
-        public async Task<IActionResult> GetPlayerPoints(string playerID)
-        {
-            return null;
-        }
-
-        [HttpPut("[controller]/playerpoints")]
-        public async Task<IActionResult> UpdatePlayerPoints(Player player)
-        {
-            return null;
+            return _gameSessionService.SurvivngPlayers == null ? BadRequest("No Surviving players could be found") : Ok(_gameSessionService.SurvivngPlayers);
         }
     }
 }
