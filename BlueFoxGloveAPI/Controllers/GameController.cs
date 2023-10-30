@@ -45,5 +45,20 @@ namespace BlueFoxGloveAPI.Controllers
         {
             return _gameSessionService.SurvivngPlayers == null ? BadRequest("No Surviving players could be found") : Ok(_gameSessionService.SurvivngPlayers);
         }
+
+        [HttpGet("[controller]/getSessionWinner")]
+        public IActionResult GetGameSessionWinner()
+        {
+            var survivingPlayers = _gameSessionService.SurvivngPlayers;
+
+            if (survivingPlayers == null)
+            {
+                return BadRequest("No Surviving players could be found");
+            }
+
+            var gameSessionWinner = survivingPlayers.OrderByDescending(_ => _.PlayerScore).ThenByDescending(_ => _.PlayerHealth).First();
+
+            return Ok(gameSessionWinner);
+        }
     }
 }

@@ -250,5 +250,92 @@ namespace BlueFoxGloveAPI.Tests
             //Assert
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public void GetGameSessionWinner_WhenSurvivngPlayersCollectionIsNotEmpty_ReturnWinningPlayer()
+        {
+            //Arrange
+            var survingPlayers = new List<Player>
+            {
+                new Player
+                {
+                    Credentials = new PlayerCredentials
+                    {
+                        PlayerId = "player1",
+                        PlayerName = "John Doe"
+                    },
+                    PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
+                    PlayerScore = 10,
+                    PlayerHealth = 80,
+                    PlayerXCoordinate = 100,
+                    PlayerYCoordinate = 100
+                },
+                new Player
+                {
+                    Credentials = new PlayerCredentials
+                    {
+                        PlayerId = "player3",
+                        PlayerName = "Jane Doe"
+                    },
+                    PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
+                    PlayerScore = 25,
+                    PlayerHealth = 50,
+                    PlayerXCoordinate = 100,
+                    PlayerYCoordinate = 500
+                },
+                new Player
+                {
+                    Credentials = new PlayerCredentials
+                    {
+                        PlayerId = "player4",
+                        PlayerName = "Joe Doe"
+                    },
+                    PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
+                    PlayerScore = 15,
+                    PlayerHealth = 55,
+                    PlayerXCoordinate = 500,
+                    PlayerYCoordinate = 100
+                },
+                new Player
+                {
+                    Credentials = new PlayerCredentials
+                    {
+                        PlayerId = "player5",
+                        PlayerName = "Joe Doe"
+                    },
+                    PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 30, DateTimeKind.Utc),
+                    PlayerScore = 25,
+                    PlayerHealth = 45,
+                    PlayerXCoordinate = 500,
+                    PlayerYCoordinate = 100
+                }
+            };
+            _gameSessionService.SurvivngPlayers.Returns(survingPlayers);
+
+            var expected = survingPlayers[1];
+
+            //Act
+            var result = _gameController.GetGameSessionWinner() as ObjectResult;
+            var actual = result?.Value;
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void GetGameSessionWinner_WhenSurvivngPlayersCollectionIstEmpty_ReturnBadRequestCode()
+        {
+            //Arrange
+            _gameSessionService.SurvivngPlayers.ReturnsNull();
+
+            var expected = 400;
+
+            //Act
+            var result = _gameController.GetGameSessionWinner() as ObjectResult;
+            var actual = result?.StatusCode;
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+        }
     }
 }
