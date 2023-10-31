@@ -12,5 +12,6 @@ namespace BlueFoxGloveAPI.Repository.Interfaces
         Task DeleteGamePlayers(Player playersRemoved);
         Task<GameSession> GetGameSessionById(string gameSessionId);
         Task<GameSession> UpdateGameSession(GameSession gameSession, Player newPlayer);
+        Task<GameSession> RemovePlayerFromGameSession(string gameSessionId, string playerId);
     }
 }

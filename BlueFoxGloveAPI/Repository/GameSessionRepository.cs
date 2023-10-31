@@ -59,5 +59,18 @@ namespace BlueFoxGloveAPI.Repository
 
             return result;
         }
+
+        public async Task<GameSession> RemovePlayerFromGameSession(string gameSessionId, string playerId)
+        {
+            var findFilter = Builders<GameSession>.Filter.Eq(field => field.GameSessionId, gameSessionId);
+            var gameSession = await _gameSessionCollection.FindAsync(findFilter);
+
+            var updatedPlayersSessionList = gameSession.Current.First().PlayersJoiningSession.FindAll(_ => _.Credentials.PlayerId != playerId);
+
+            var updatefilter = Builders<GameSession>.Filter.Eq(field => field.GameSessionId, gameSessionId);
+            var update = Builders<GameSession>.Update.Set(field => field.PlayersJoiningSession, updatedPlayersSessionList);
+
+            return await _gameSessionCollection.FindOneAndUpdateAsync<GameSession>(updatefilter, update);
+        }
     }
 }

@@ -211,5 +211,10 @@ namespace BlueFoxGloveAPI.Services
 
             projectile.Position = updatedProjectilePosition;
         }
+
+        public async Task<GameSession> RemovePlayerFromGameSession(string playerId)
+        {
+            return await _gameSessionRepository.RemovePlayerFromGameSession(GameSessionId, playerId);
+        }
     }
 }

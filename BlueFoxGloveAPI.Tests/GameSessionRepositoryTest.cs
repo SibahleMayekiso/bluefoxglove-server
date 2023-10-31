@@ -177,5 +177,53 @@ namespace BlueFoxGloveAPI.Tests
             //Assert
             Assert.Contains(newGame, _gameSessions);
         }
+
+        [Test]
+        public async Task RemovePlayerFromGameSession_WhenPlayerQuitsGameSession_ReturnUpdatedPlayersList()
+        {
+            //Arrange
+            var playerId = _gameSessions[1].PlayersJoiningSession[0].Credentials.PlayerId;
+            var gameSessionId = _gameSessions[1].GameSessionId;
+            var updatedGameSession = new GameSession
+            {
+                GameSessionId = "64dd1cf27a6922a9505fc8ba",
+                GameSessionTimeStamp = new DateTime(2023, 1, 2, 12, 0, 0, DateTimeKind.Utc),
+                PlayersJoiningSession = new List<Player>
+                    {
+                        new Player
+                        {
+                            Credentials = new PlayerCredentials
+                            {
+                                PlayerId = "player2",
+                                PlayerName = "James Doe"
+                            },
+                            PlayerExitTime = new DateTime(2023, 1, 1, 12, 0, 15, DateTimeKind.Utc),
+                            PlayerScore = 0,
+                            PlayerHealth = 100,
+                            PlayerXCoordinate = 150,
+                            PlayerYCoordinate = 150
+                        }
+                    }
+            };
+            var expected = updatedGameSession.PlayersJoiningSession;
+
+            _cursor.Current.Returns(new List<GameSession> { _gameSessions[1] });
+            _cursor.MoveNextAsync().Returns(Task.FromResult(true));
+
+            _gameSessionCollection
+                .FindAsync<GameSession>(Arg.Any<FilterDefinition<GameSession>>())
+                .ReturnsForAnyArgs(Task.FromResult(_cursor));
+
+            _gameSessionCollection
+                .FindOneAndUpdateAsync<GameSession>(Builders<GameSession>.Filter.Eq(field => field.GameSessionId, gameSessionId), Arg.Any<UpdateDefinition<GameSession>>())
+                .ReturnsForAnyArgs(Task.FromResult(updatedGameSession));
+
+            //Act
+            var result = await _gameSessionRepository.RemovePlayerFromGameSession(gameSessionId, playerId);
+            var actual = result.PlayersJoiningSession;
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

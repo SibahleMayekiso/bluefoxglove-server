@@ -544,5 +544,23 @@ namespace BlueFoxGloveAPI.Tests
             //Assert
             Assert.AreEqual(expected, actual);
         }
+
+        [Test]
+        public async Task RemovePlayerFromGameSession_WhenPlayerQuitsGameSession_ReturnUpdatedPlayersList()
+        {
+            //Arrange
+            var playerId = "player1";
+            _gameSessionService.GameSessionId = _gameSessions[0].GameSessionId;
+            var expected = _gameSessions[0].PlayersJoiningSession;
+
+            _gameRepository.RemovePlayerFromGameSession(_gameSessionService.GameSessionId, playerId).Returns(_gameSessions[0]);
+
+            //Act
+            var result = await _gameSessionService.RemovePlayerFromGameSession(playerId);
+            var actual = result.PlayersJoiningSession;
+
+            //Assert
+            Assert.AreEqual(expected, actual);
+        }
     }
 }

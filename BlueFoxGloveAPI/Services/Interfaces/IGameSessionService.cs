@@ -26,5 +26,6 @@ namespace BlueFoxGloveAPI.Services.Interfaces
         void DisposeProjectile(int projectileId);
         void UpdateProjectilePosition(int projectileId);
         Task CheckSurvivingPlayers();
+        Task<GameSession> RemovePlayerFromGameSession(string playerId);
     }
 }
