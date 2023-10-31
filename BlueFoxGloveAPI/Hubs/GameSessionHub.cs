@@ -75,5 +75,12 @@ namespace BlueFoxGloveAPI.Hubs
 
             await Clients.Group(gameSessionId).SendAsync("UpdateProjectilePosition", _gameSessionService.ProjectilesInPlay);
         }
+
+        public async Task RemovePlayerFromGameSession(string gameSessionId, string playerId)
+        {
+            var updatedGameSession = _gameSessionService.RemovePlayerFromGameSession(playerId);
+
+            await Clients.Group(gameSessionId).SendAsync("RemovePlayerFromGameSession", updatedGameSession);
+        }
     }
 }
