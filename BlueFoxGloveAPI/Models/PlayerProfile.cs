@@ -6,6 +6,8 @@ namespace BlueFoxGloveAPI.Models
 {
     public class PlayerProfile
     {
+        [BsonId, BsonRepresentation(BsonType.ObjectId), BsonElement("id")]
+        public string Id { get; set; }
         [BsonElement("PlayerCredentials")]
         public PlayerCredentials Credentials { get; set; }
         [BsonElement("selectedCharacter")]

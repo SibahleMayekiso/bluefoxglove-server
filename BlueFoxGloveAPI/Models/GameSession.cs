@@ -6,7 +6,7 @@ namespace BlueFoxGloveAPI.Models
     public class GameSession
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonRepresentation(BsonType.ObjectId), BsonElement("gameSessionId")]
         public string GameSessionId { get; set; }
         [BsonElement("gameName")]
         public string GameName { get; set; }

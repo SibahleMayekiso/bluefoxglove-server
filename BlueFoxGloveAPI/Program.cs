@@ -22,6 +22,7 @@ builder.Services.AddSingleton<IPlayerCredentialsRepository, PlayerCredentialsRep
 builder.Services.AddSingleton<ILobbyTimerWrapper, LobbyTimerWrapper>();
 builder.Services.AddSingleton<IGameSessionTimerWrapper, GameSessionTimerWrapper>();
 builder.Services.AddSingleton<IGameSessionService, GameSessionService>();
+builder.Services.AddSingleton<IPlayerProfileRepository, PlayerProfileRepository>();
 builder.Services.Configure<MongoDBSettings>(
     builder.Configuration.GetSection("MongoDBSettings")
 );
