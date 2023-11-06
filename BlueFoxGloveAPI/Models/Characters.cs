@@ -5,10 +5,9 @@ namespace BlueFoxGloveAPI.Models
 {
     public class Characters
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
+        [BsonId, BsonRepresentation(BsonType.ObjectId), BsonElement("characterId")]
         public string CharacterId { get; set; }
-        [BsonElement("charactername")]
+        [BsonElement("characterName")]
         public string CharacterName { get; set; }
         [BsonElement("characterType")]
         public string CharacterType { get; set; }
