@@ -1,4 +1,6 @@
-﻿using BlueFoxGloveAPI.Repository.Interfaces;
+﻿using BlueFoxGloveAPI.Models;
+using BlueFoxGloveAPI.Repository;
+using BlueFoxGloveAPI.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlueFoxGloveAPI.Controllers
@@ -33,6 +35,19 @@ namespace BlueFoxGloveAPI.Controllers
             var result = await _playerProfileRepository.UpdateSelectedCharacter(playerId, characterId);
 
             return result == null ? BadRequest("Unable to update selected Character") : Ok(result);
+        }
+
+        [HttpPost("/playerprofile")]
+        public async Task<IActionResult> CreatePlayerProfile(PlayerProfile playerProfile)
+        {
+            if (playerProfile == null)
+            {
+                return BadRequest("Invalid or incomplete player profile data");
+            }
+
+            await _playerProfileRepository.CreatePlayerProfile(playerProfile);
+
+            return Ok(playerProfile);
         }
     }
 }
