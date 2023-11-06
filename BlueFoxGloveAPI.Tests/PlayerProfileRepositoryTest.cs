@@ -25,7 +25,7 @@ namespace BlueFoxGloveAPI.Tests
             _playerProfileCollection = Substitute.For<IMongoCollection<PlayerProfile>>();
             _characterCollection = Substitute.For<IMongoCollection<Characters>>();
             _mongoDatabase.GetCollection<PlayerProfile>("PlayerProfileCollection").Returns(_playerProfileCollection);
-            _mongoDatabase.GetCollection<Characters>("CharacterCollection").Returns(_characterCollection);
+            _mongoDatabase.GetCollection<Characters>("CharactersCollection").Returns(_characterCollection);
             _cursor = Substitute.For<IAsyncCursor<Characters>>();
             _profileRepository = new PlayerProfileRepository(_mongoDatabase);
 
@@ -112,7 +112,7 @@ namespace BlueFoxGloveAPI.Tests
             _cursor.MoveNextAsync().Returns(Task.FromResult(true));
 
             _characterCollection
-                .FindAsync<Characters>(Builders<Characters>.Filter.Eq(filed => filed.CharacterId, characterId))
+                .FindAsync<Characters>(Arg.Any<FilterDefinition<Characters>>())
                 .Returns(Task.FromResult(_cursor));
 
             _playerProfileCollection
@@ -125,6 +125,39 @@ namespace BlueFoxGloveAPI.Tests
 
             //Assert
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public async Task CreatePlayerProfile_CreatePlayerProfile_PlayerProfileCollectionContainsNewProfile()
+        {
+            //Arrange
+            var playerId = "653fafe25893539767c6360f";
+            var playerProfile = new PlayerProfile
+            {
+                Credentials = new PlayerCredentials { PlayerId = playerId, PlayerName = "Player1" },
+                SelectedCharacter = new Characters
+                {
+                    CharacterId = "64d11cf27a6922a9505fc8be",
+                    CharacterName = "Guppy",
+                    CharacterType = "Soldier",
+                    CharacterMaxHealth = 100,
+                    CharacterMaxSpeed = 5.00
+                },
+                KillCount = 0,
+                LongestSurvivalTime = 0,
+                NumberOfGamesPlayed = 0,
+                TotalPlayTime = 0
+            };
+
+            _playerProfileCollection
+               .When(collection => collection.InsertOneAsync(playerProfile))
+               .Do(callback => _playerProfiles.Add(playerProfile));
+
+            //Act 
+            await _profileRepository.CreatePlayerProfile(playerProfile);
+
+            //Assert
+            Assert.Contains(playerProfile, _playerProfiles);
         }
     }
 }
